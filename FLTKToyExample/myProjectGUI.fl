@@ -1,0 +1,35 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+class myProjectGUI {open
+} {
+  Function {myProjectGUI()} {open
+  } {
+    Fl_Window controlPanel {
+      label controlPanel open
+      xywh {424 275 372 170} type Single visible
+    } {
+      Fl_Button {} {
+        label Quit
+        xywh {145 115 85 30}
+      }
+      Fl_Box {} {
+        label {FLTK + ITK}
+        xywh {30 19 310 77} labelsize 28
+      }
+    }
+  }
+  Function {Quit()} {open
+  } {
+    code {this->Hide();} {}
+  }
+  Function {Hide()} {open
+  } {
+    code {controlPanel->hide();} {}
+  }
+  Function {Show()} {open
+  } {
+    code {controlPanel->show();} {}
+  }
+} 
