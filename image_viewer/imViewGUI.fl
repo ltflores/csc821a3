@@ -1,0 +1,44 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+class imViewGUI {open : {public imViewBase}
+} {
+  Function {imViewGUI()} {open
+  } {
+    Fl_Window imView {open
+      xywh {1236 310 275 185} type Double
+      code0 {\#include "imViewBase.h"} visible
+    } {
+      Fl_Button {} {
+        label {Load Image}
+        callback {this->ReadImage();}
+        xywh {95 20 85 30}
+      }
+      Fl_Button {} {
+        label {Run Filter}
+        callback {this->UpdateFilterCallback();}
+        xywh {95 70 85 30}
+      }
+      Fl_Button {} {
+        label Quit
+        callback {this->Hide();}
+        xywh {95 120 85 30}
+      }
+    }
+  }
+  Function {~imViewGUI()} {open
+  } {
+    code {this->Hide();} {}
+  }
+  Function {Show()} {open selected
+  } {
+    code {imView->show();} {}
+  }
+  Function {Hide(void)} {open
+  } {
+    code {if( m_BeforeWindow ) m_BeforeWindow->Hide();
+if( m_AfterWindow ) m_AfterWindow->Hide();
+imView->hide();} {}
+  }
+} 

@@ -1,0 +1,33 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+class imViewWindowGUI {open : {public imViewWindowBase}
+} {
+  Function {imViewWindowGUI()} {open
+  } {
+    Fl_Window renderWindow {open selected
+      xywh {187 187 539 489} type Double
+      code0 {\#include "imViewWindowBase.h"} visible
+    } {
+      Fl_Box m_FlRenderWindowInteractor {
+        xywh {0 -2 540 495} box BORDER_BOX
+        code0 {\#include "vtkFlRenderWindowInteractor.h"}
+        class vtkFlRenderWindowInteractor
+      }
+    }
+  }
+  Function {~imViewWindowGUI()} {open
+  } {
+    code {this->Hide();} {}
+  }
+  Function {Show()} {open
+  } {
+    code {renderWindow->show();
+m_FlRenderWindowInteractor->show();} {}
+  }
+  Function {Hide(void)} {open
+  } {
+    code {renderWindow->hide();} {}
+  }
+} 
