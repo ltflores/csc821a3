@@ -1,0 +1,150 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0300 
+header_name {.h} 
+code_name {.cxx}
+class RegionGrowingGUI {open : {public RegionGrowingBase}
+} {
+  Function {RegionGrowingGUI()} {open
+  } {
+    Fl_Window consoleWindow {
+      label {Region Growing} open
+      xywh {884 151 647 425} type Double
+      code0 {\#include <RegionGrowingBase.h>}
+      code1 {\#include <fltkLightButton.h>} visible
+    } {
+      Fl_Group controlsGroup {open
+        xywh {10 22 615 323}
+      } {
+        Fl_Group seedGroup {
+          label {Seed Point} open
+          xywh {315 39 310 51}
+        } {
+          Fl_Value_Output xSeedPointValueOutput {
+            label x
+            xywh {360 46 70 26} step 0.01
+          }
+          Fl_Value_Output ySeedPointValueOutput {
+            label y
+            xywh {450 44 70 28} step 0.01
+          }
+          Fl_Value_Output zSeedPointValueOutput {
+            label z
+            xywh {540 44 70 28} step 0.01
+          }
+        }
+        Fl_Button {} {
+          label {Connected Threshold}
+          callback {m_ConnectedThresholdImageFilter->Update();}
+          xywh {24 150 170 30} box ROUNDED_BOX
+        }
+        Fl_Counter lowerThresholdCounter {
+          label lower
+          callback {m_ConnectedThresholdImageFilter->SetLower( static_cast<InputPixelType>( o->value() ) );}
+          xywh {220 175 245 20} minimum 0 maximum 1e+009 step 1e+008 value 1e+008
+          code0 {o->lstep(10.0);}
+        }
+        Fl_Counter upperThresholdCounter {
+          label upper
+          callback {m_ConnectedThresholdImageFilter->SetUpper( static_cast<InputPixelType>( o->value() ) );}
+          xywh {225 125 240 20} minimum 0 maximum 1e+009 step 1e+008 value 1e+008
+          code0 {o->lstep( 10.0 );}
+        }
+        Fl_Light_Button thresholdConnectedImageButton {
+          label {show image}
+          callback {this->ShowConnectedThresholdImage();}
+          xywh {475 150 105 20} type Normal selection_color 1
+          class {fltk::LightButton}
+        }
+        Fl_Button {} {
+          label {confidence connected}
+          callback {m_ConfidenceConnectedImageFilter->Update();}
+          xywh {23 237 170 30} box ROUNDED_BOX
+        }
+        Fl_Value_Input multiplierValueInput {
+          label multiplier
+          callback {m_ConfidenceConnectedImageFilter->SetMultiplier( o->value() );}
+          xywh {270 239 50 24} maximum 100 value 2.5
+        }
+        Fl_Value_Input iterationsConfidenceValueInput {
+          label iterations
+          callback {m_ConfidenceConnectedImageFilter->SetNumberOfIterations( static_cast<unsigned int>( o->value() ) );}
+          xywh {400 238 50 24} minimum 1 maximum 100 value 2
+        }
+        Fl_Light_Button confidenceConnectedImageButton {
+          label {show image}
+          callback {this->ShowConfidenceConnectedImage();}
+          xywh {485 240 105 20} type Normal
+          class {fltk::LightButton}
+        }
+        Fl_Light_Button inputImageButton {
+          label inputImagButton
+          callback {ShowInputImage()}
+          xywh {60 70 135 20} type Normal
+          class {fltk::LightButton}
+        }
+        Fl_Light_Button homogeneousImageButton {
+          label {homogeneous Image}
+          callback {ShowHomogeneousImage();}
+          xywh {460 90 155 20} type Normal
+          class {fltk::LightButton}
+        }
+        Fl_Light_Button homogeneousImageVTKButton {
+          label {VTK Render}
+          callback {ShowHomogeneousImageWithVTK();}
+          xywh {60 95 135 20} selection_color 1
+          class {fltk::LightButton}
+        }
+        Fl_Light_Button customRegionGrowingImageButton {
+          label {show image}
+          callback {this->ShowCustomRegionGrowingImage();}
+          xywh {217 306 105 25}
+          class {fltk::LightButton}
+        }
+        Fl_Button {} {
+          label {Custom Region Growing}
+          callback {m_CustomRegionGrowingImageFilter->Update();}
+          xywh {20 302 174 33} box ROUNDED_BOX
+        }
+      }
+      Fl_Button {} {
+        label quit
+        callback {this->Quit();}
+        xywh {280 370 90 30} box ROUNDED_BOX
+      }
+      Fl_Button {} {
+        label {load file}
+        callback {this->LoadInputImage();}
+        xywh {135 20 90 35} box ROUNDED_BOX align 128
+      }
+      Fl_Button {} {
+        label {load DICOM}
+        callback {this->LoadInputImageSeries();}
+        xywh {35 20 90 35} box ROUNDED_BOX
+      }
+    }
+  }
+  Function {~RegionGrowingGUI()} {open
+  } {}
+  Function {Quit( void )} {open return_type {virtual void}
+  } {}
+  Function {Load( void )} {open return_type {virtual void}
+  } {}
+  Function {ShowInputImage( void )} {open return_type {virtual void}
+  } {}
+  Function {ShowConnectedThresholdImage( void )} {open return_type {virtual void}
+  } {}
+  Function {ShowConsole( void )} {open return_type {virtual void}
+  } {}
+  Function {ShowConfidenceConnectedImage( void )} {open return_type {virtual void}
+  } {}
+  Function {UpdateExtract()} {open return_type {virtual void}
+  } {}
+  Function {ShowHomogeneousImage( void )} {open return_type {virtual void}
+  } {}
+  Function {LoadDicom( void )} {open return_type {virtual void}
+  } {}
+  Function {ShowHomogeneousImageWithVTK( void )} {open return_type {virtual void}
+  } {}
+  Function {ShowCustomRegionGrowingImage( void )} {open selected return_type {virtual void}
+  } {}
+} 
