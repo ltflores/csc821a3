@@ -19,14 +19,41 @@ RegionGrowing::RegionGrowing() {
 	m_InputImageViewer.SetLabel("Input Image");
 	m_DicomImageViewer.SetLabel("DICOM Image");
 	
-	// filter values
+	/** Image Viewer parameters */
 	m_ConnectedThresholdImageViewer.SetLabel("Connected Threshold Image");
 	m_ConfidenceConnectedImageViewer.SetLabel("Confidence Connected Image");
 	m_CustomRegionGrowingImageViewer.SetLabel("Custom Region Growing Image");
 	
+	m_CurvatureAnisotropicDiffusionImageViewer.SetLabel("Curvature Anisotropic Diffusion Image");
+	m_CurvatureAnisotropicDiffusionImageViewer.ClickSelectCallBack( ClickSelectCallback, (void *)this);
+	m_CurvatureAnisotropicDiffusionImageViewer.SetImage( m_CurvatureAnisotropicDiffusionImageFilter->GetOutput() ); 
+	
+	m_GradientAnisotropicDiffusionImageViewer.SetLabel("Gradient Anisotropic Diffusion Image");
+	m_GradientAnisotropicDiffusionImageViewer.ClickSelectCallBack( ClickSelectCallback, (void *)this);
+	m_GradientAnisotropicDiffusionImageViewer.SetImage( m_GradientAnisotropicDiffusionImageFilter->GetOutput() );
+	
 	m_HomogeneousImageViewer.SetLabel("Homogeneous Image");
 	m_HomogeneousImageViewer.ClickSelectCallBack( ClickSelectCallback, (void *)this);
 	m_HomogeneousImageViewer.SetImage( m_NullImageFilter->GetOutput() );
+	
+	/** connect GUI values to preprocessing filter parameters */
+	m_CurvatureAnisotropicDiffusionImageFilter->SetNumberOfIterations(
+         static_cast<unsigned int>(curvatureAnisotropicDiffusionIterationsValueInput->value()) );
+
+	m_CurvatureAnisotropicDiffusionImageFilter->SetTimeStep(
+		curvatureAnisotropicDiffusionTimeStepValueInput->value() );
+
+	m_CurvatureAnisotropicDiffusionImageFilter->SetConductanceParameter(
+		curvatureAnisotropicDiffusionConductanceValueInput->value() );
+		
+	m_GradientAnisotropicDiffusionImageFilter->SetNumberOfIterations(
+         static_cast<unsigned int>(gradientAnisotropicDiffusionIterationsValueInput->value()) );
+
+	m_GradientAnisotropicDiffusionImageFilter->SetTimeStep(
+                                   gradientAnisotropicDiffusionTimeStepValueInput->value() );
+
+	m_GradientAnisotropicDiffusionImageFilter->SetConductanceParameter(
+                                   gradientAnisotropicDiffusionConductanceValueInput->value() );
 	
 	// init itk filter
 	m_ConnectedThresholdImageFilter->SetLower( 
@@ -46,15 +73,18 @@ RegionGrowing::RegionGrowing() {
 	/***************************************************************************/
 	
 	m_VTKSegmentedImageViewer = VTKImageViewerType::New();
-	m_VTKSegmentedImageViewer->SetImage( m_ConfidenceConnectedImageFilter->GetOutput() );
+	//m_VTKSegmentedImageViewer->SetImage( m_ConfidenceConnectedImageFilter->GetOutput() );
+	m_VTKSegmentedImageViewer->SetImage( m_CastImageFilter2->GetOutput() );
 	
 	// GUI Observers
 	//inputImageButton->Observe( m_ImageReader.GetPointer() );
-	inputImageButton->Observe( m_NullImageFilter.GetPointer() );
-	homogeneousImageButton->Observe( m_NullImageFilter.GetPointer() );
+	inputImageButton->Observe( m_DicomReader.GetPointer() );
 	thresholdConnectedImageButton->Observe( m_ConnectedThresholdImageFilter.GetPointer() );
 	confidenceConnectedImageButton->Observe( m_ConfidenceConnectedImageFilter.GetPointer() );
-	
+	customRegionGrowingImageButton->Observe( m_CustomRegionGrowingImageFilter.GetPointer() );
+	gradientAnisotropicDiffusionImageButton->Observe( m_GradientAnisotropicDiffusionImageFilter.GetPointer() );
+	curvatureAnisotropicDiffusionImageButton->Observe( m_CurvatureAnisotropicDiffusionImageFilter.GetPointer() );
+	homogeneousImageVTKButton->Observe( m_NullImageFilter.GetPointer() );
 	
 	//progressSlider->Observe( m_NullImageFilter.GetPointer() );
 	//progressSlider->Observe( m_ConnectedThresholdImageFilter.GetPointer() );
@@ -230,19 +260,10 @@ void RegionGrowing::ShowInputImage( void )
 		return;
     }
 	
-	if (m_InputImageIsDICOM)
-	{
-		m_DicomToInternalImageTypeFilter->SetInput( m_DicomReader->GetOutput() );
-		m_DicomToInternalImageTypeFilter->Update();
-		m_HomogeneousImageViewer.SetImage( m_DicomToInternalImageTypeFilter->GetOutput() );		
-		m_HomogeneousImageViewer.Show();	
-		
-		//m_DicomImageViewer.SetImage( m_DicomReader->GetOutput() );
-		//m_DicomImageViewer.Show();
-	} else {
-		m_InputImageViewer.SetImage( m_ImageReader->GetOutput() );  
-		m_InputImageViewer.Show();
-	}
+	m_DicomToInternalImageTypeFilter->SetInput( m_DicomReader->GetOutput() );
+	m_DicomToInternalImageTypeFilter->Update();
+	m_HomogeneousImageViewer.SetImage( m_DicomToInternalImageTypeFilter->GetOutput() );		
+	m_HomogeneousImageViewer.Show();
 	
 }
 
@@ -287,15 +308,10 @@ void RegionGrowing::ShowConnectedThresholdImage( void )
 /** show confidence connected image */
 void RegionGrowing::ShowConfidenceConnectedImage( void )
 {
+	m_NullImageFilter->Update();
+	m_ConfidenceConnectedImageFilter->SetInput(m_NullImageFilter->GetOutput());
 	m_ConfidenceConnectedImageFilter->Update();
-	if (m_InputImageIsDICOM)
-	{
-		m_DicomToInternalImageTypeFilter->SetInput( m_DicomReader->GetOutput() );
-		m_DicomToInternalImageTypeFilter->Update();
-		m_ConfidenceConnectedImageViewer.SetImage( m_DicomToInternalImageTypeFilter->GetOutput() );
-	} else {
-		m_ConfidenceConnectedImageViewer.SetImage( m_ImageReader->GetOutput() );  
-	} 
+	m_ConfidenceConnectedImageViewer.SetImage( m_NullImageFilter->GetOutput() );
 	m_ConfidenceConnectedImageViewer.SetOverlay( m_ConfidenceConnectedImageFilter->GetOutput() );
 	m_ConfidenceConnectedImageViewer.Show();
 }
@@ -314,6 +330,24 @@ void RegionGrowing::ShowHomogeneousImageWithVTK( void )
 	//m_VTKSegmentedImageViewer->SetColorLevel(127.5);
 	//m_VTKSegmentedImageViewer->SetColorWindow(255); 
 	m_VTKSegmentedImageViewer->Show();
+}
+
+/** show gradient anisotropic diffusion image */
+void RegionGrowing::ShowGradientAnisotropicDiffusionImage( void )
+{
+  m_GradientAnisotropicDiffusionImageFilter->Update();
+  m_GradientAnisotropicDiffusionImageViewer.SetImage( m_GradientAnisotropicDiffusionImageFilter->GetOutput() );  
+  m_GradientAnisotropicDiffusionImageViewer.Show();
+
+}
+
+/** Show curvature anisotropic diffusion image */
+void RegionGrowing::ShowCurvatureAnisotropicDiffusionImage( void )
+{
+  m_CurvatureAnisotropicDiffusionImageFilter->Update();
+  m_CurvatureAnisotropicDiffusionImageViewer.SetImage( m_CurvatureAnisotropicDiffusionImageFilter->GetOutput() );  
+  m_CurvatureAnisotropicDiffusionImageViewer.Show();
+
 }
 
 /** INSERT OTHER FILTER METHODS HERE */
@@ -342,6 +376,7 @@ void RegionGrowing::SelectSeedPoint(float x, float y, float z)
 
 	m_ConnectedThresholdImageFilter->SetSeed( seed );
 	m_ConfidenceConnectedImageFilter->SetSeed( seed );
+	m_CustomRegionGrowingImageFilter->SetSeed( seed );
 }
 
 /** extract region */
@@ -374,6 +409,97 @@ void RegionGrowing::UpdateExtract()
     size[2] = static_cast<SizeType::SizeValueType>( float_zEndValueInput ) - start[2];
 	m_ExtractImageFilter->SetExtractionRegion( region );
 }
+
+/**
+RegionGrowing::ShowGPURayTracedVolume(InternalImageType * sourceImage, const char * title)
+{
+	try
+	{
+		//Prepare VTK data
+		m_InternalToVTKImageTypeFilter = InternalToVTKImageTypeFilterType::New();
+		m_InternalToVTKImageTypeFilter->SetOutputMinimum(   0 );
+		m_InternalToVTKImageTypeFilter->SetOutputMaximum( 4128 );
+		m_InternalToVTKImageTypeFilter->SetInput(sourceImage);
+		
+		// create connector
+		ConnectorType::Pointer m_Connector = ConnectorType::New();
+		m_Connector->SetInput(m_InternalToVTKImageTypeFilter->GetOutput());
+		m_Connector->GetImporter()->SetDataScalarTypeToUnsignedShort();
+		m_Connector->Update();	
+		
+		
+		vtkRenderer * arenderer = vtkRenderer::New(); 
+		vtkRenderWindow * renwin = vtkRenderWindow::New(); 
+		vtkVolume * vol=vtkVolume::New(); 
+
+		
+		// Create and initialize the mapper
+		vtkKWEVolumeMapper *mapper = vtkKWEVolumeMapper::New();
+		mapper->SetInput(m_Connector->GetOutput());
+		mapper->SetBlendModeToComposite();
+		
+		// Create and initialize the volume
+		vtkVolume *volume = vtkVolume::New();
+		volume->SetMapper(mapper);
+		// Create transfer function - mapping scalar values [0-...] to COLOR [0-1, 0-1, 0-1]
+		vtkColorTransferFunction *colorTransferFunction = vtkColorTransferFunction::New();
+		//colorTransferFunction->AddRGBPoint(   0.0, 0.0,0.0,0.0);
+		//colorTransferFunction->AddRGBPoint( 500.0, 0.9,0.5,0.3);
+		//colorTransferFunction->AddRGBPoint(1100.0, 0.8,0.8,0.6);
+		//colorTransferFunction->AddRGBPoint(1200.0, 0.6,0.6,0.6);
+		colorTransferFunction->AddRGBPoint(1024, 1.0,0.0,0.0);
+		colorTransferFunction->AddRGBPoint(2048, 0.0,1.0,0.0);
+		colorTransferFunction->AddRGBPoint(3096, 0.0,0.0,1.0);
+
+		
+		vtkPiecewiseFunction *opacityTransferFunction = vtkPiecewiseFunction::New();
+		opacityTransferFunction->AddPoint(    0, 0.0);
+		opacityTransferFunction->AddPoint(    1, 0.0);
+		//opacityTransferFunction->AddPoint(  980, 0.1);
+		//opacityTransferFunction->AddPoint(  1055, 0.2);
+		opacityTransferFunction->AddPoint(  1024, 0.05);
+		opacityTransferFunction->AddPoint(  2048, 0.2);
+		opacityTransferFunction->AddPoint( 3096, 1.0);
+		// The property describes how the data will look
+		vtkVolumeProperty *volumeProperty = vtkVolumeProperty::New();
+		volumeProperty->SetColor(colorTransferFunction);
+		volumeProperty->SetScalarOpacity(opacityTransferFunction);
+		//volumeProperty->ShadeOn(); // request 3d shading (german:> beleuchtungsberechnung anfordern) //has to be implemented in vtkCastRay_OwnWork
+			
+		volume->SetProperty(volumeProperty);
+
+		// basic camera
+		vtkCamera *cam=vtkCamera::New(); 
+		cam->SetViewUp(0,0,-1); 
+		cam->SetPosition(0,1,0); 
+		cam->SetFocalPoint(0,0,0); 
+		cam->ComputeViewPlaneNormal();
+
+		arenderer->AddActor(volume); 
+		arenderer->SetActiveCamera(cam); 
+		arenderer->ResetCamera(); 
+		arenderer->SetBackground(1,1,1);
+
+		renwin->AddRenderer(arenderer);
+		renwin->SetWindowName(title);
+		vtkRenderWindowInteractor *iren=vtkRenderWindowInteractor::New(); 
+		iren->SetRenderWindow(renwin); 
+		renwin->Render(); 
+		iren->Initialize(); 
+		iren->Start();
+		iren->Delete();
+		renwin->Delete();
+		cam->Delete();
+		volumeProperty->Delete();
+		volume->Delete();
+	}
+	catch(itk::ExceptionObject &ex)
+	{
+		std::cout << ex.GetDescription() << std::endl;
+	}
+	return true;
+}
+*/
 
 /** main */
 int main()

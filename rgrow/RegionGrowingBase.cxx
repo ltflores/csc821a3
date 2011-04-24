@@ -29,36 +29,39 @@ RegionGrowingBase::RegionGrowingBase()
 	m_DicomToInternalImageTypeFilter = DicomToInternalImageTypeFilterType::New();
 	m_DicomToInternalImageTypeFilter->SetOutputMinimum( 0 );
 	m_DicomToInternalImageTypeFilter->SetOutputMaximum( 0xffffffff );
-	
-
 
 	/** initialize cast image filter */
 	m_CastImageFilter = CastImageFilterType::New();
 	m_CastImageFilter->SetInput( m_ImageReader->GetOutput() );
+	
+	m_CastImageFilter2 = CastImageFilterType2::New();
+	m_CastImageFilter2->SetInput( m_DicomReader->GetOutput() );
 
 	m_ExtractImageFilter = ExtractImageFilterType::New();
 	m_ExtractImageFilter->SetInput( m_CastImageFilter->GetOutput() );
-
-	//INSERT OTHER FILTERS HERE
 	
+	/** initialize data structures */
 	m_NullImageFilter = NullImageFilterType::New();
+	m_GradientAnisotropicDiffusionImageFilter = GradientAnisotropicDiffusionImageFilterType::New();
+	m_CurvatureAnisotropicDiffusionImageFilter = CurvatureAnisotropicDiffusionImageFilterType::New();
 	m_ConnectedThresholdImageFilter = ConnectedThresholdImageFilterType::New();
 	m_ConfidenceConnectedImageFilter = ConfidenceConnectedImageFilterType::New();
 	m_CustomRegionGrowingImageFilter = CustomRegionGrowingImageFilterType::New();
 	
-	if (m_InputImageIsDICOM)
-	{
-		m_DicomToInternalImageTypeFilter->SetInput( m_DicomReader->GetOutput() );
-		m_ConnectedThresholdImageFilter->SetInput( m_DicomToInternalImageTypeFilter->GetOutput() );
-		m_ConfidenceConnectedImageFilter->SetInput( m_DicomToInternalImageTypeFilter->GetOutput() );
-		m_CustomRegionGrowingImageFilter->SetInput( m_DicomToInternalImageTypeFilter->GetOutput() );
-	} else
-	{
-		m_NullImageFilter->SetInput( m_ImageReader->GetOutput() );
-		m_ConnectedThresholdImageFilter->SetInput( m_NullImageFilter->GetOutput() );
-		m_ConfidenceConnectedImageFilter->SetInput( m_NullImageFilter->GetOutput() );
-		m_CustomRegionGrowingImageFilter->SetInput( m_NullImageFilter->GetOutput() );
-	}
+	/** convert input image to internal type */
+	m_DicomToInternalImageTypeFilter->SetInput( m_DicomReader->GetOutput() );
+	
+	/** connect preprocessing filter input to converted reader output */
+	m_GradientAnisotropicDiffusionImageFilter->SetInput(m_DicomToInternalImageTypeFilter->GetOutput());
+	m_CurvatureAnisotropicDiffusionImageFilter->SetInput(m_DicomToInternalImageTypeFilter->GetOutput());
+	
+	/** set null filter input, default to raw image */
+	m_NullImageFilter->SetInput( m_DicomToInternalImageTypeFilter->GetOutput() );
+	
+	/** connect r-grow filters to null output */
+	m_ConnectedThresholdImageFilter->SetInput( m_NullImageFilter->GetOutput() );
+	m_ConfidenceConnectedImageFilter->SetInput( m_NullImageFilter->GetOutput() );
+	m_CustomRegionGrowingImageFilter->SetInput( m_NullImageFilter->GetOutput() );
 	
 	m_InputImageIsLoaded  = false;
 }
@@ -111,9 +114,20 @@ void RegionGrowingBase::WriteOutputImage( const char * filename )
 }
 
 /** smoothing filter selector */
-void RegionGrowingBase::SelectSmoothingFilter( unsigned int choise )
+void RegionGrowingBase::SelectSmoothingFilter( unsigned int choice )
 {
-	//add code to select a filter
+  switch(choice)
+    {
+    case 0:
+      m_NullImageFilter->SetInput( m_DicomToInternalImageTypeFilter->GetOutput() );
+      break;
+    case 1:
+      m_NullImageFilter->SetInput( m_GradientAnisotropicDiffusionImageFilter->GetOutput() );
+      break;
+    case 2:
+      m_NullImageFilter->SetInput( m_CurvatureAnisotropicDiffusionImageFilter->GetOutput() );
+      break;
+    }
 }
 
 void RegionGrowingBase::Stop( void )

@@ -7,23 +7,113 @@
 #include <RegionGrowingBase.h>
 #include <fltkLightButton.h>
 #include <FL/Fl_Group.H>
-#include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Button.H>
-#include <FL/Fl_Counter.H>
+#include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Value_Input.H>
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_Counter.H>
 
 class RegionGrowingGUI : public RegionGrowingBase {
 public:
   RegionGrowingGUI();
   Fl_Double_Window *consoleWindow;
   Fl_Group *controlsGroup;
+private:
+  void cb_load_i(Fl_Button*, void*);
+  static void cb_load(Fl_Button*, void*);
+public:
+  fltk::LightButton *inputImageButton;
+private:
+  void cb_inputImageButton_i(fltk::LightButton*, void*);
+  static void cb_inputImageButton(fltk::LightButton*, void*);
+public:
+  fltk::LightButton *homogeneousImageVTKButton;
+private:
+  void cb_homogeneousImageVTKButton_i(fltk::LightButton*, void*);
+  static void cb_homogeneousImageVTKButton(fltk::LightButton*, void*);
+public:
   Fl_Group *seedGroup;
   Fl_Value_Output *xSeedPointValueOutput;
   Fl_Value_Output *ySeedPointValueOutput;
   Fl_Value_Output *zSeedPointValueOutput;
 private:
-  void cb_Connected_i(Fl_Button*, void*);
-  static void cb_Connected(Fl_Button*, void*);
+  void cb_quit_i(Fl_Button*, void*);
+  static void cb_quit(Fl_Button*, void*);
+  void cb_Run_i(Fl_Button*, void*);
+  static void cb_Run(Fl_Button*, void*);
+public:
+  Fl_Value_Input *curvatureAnisotropicDiffusionTimeStepValueInput;
+private:
+  void cb_curvatureAnisotropicDiffusionTimeStepValueInput_i(Fl_Value_Input*, void*);
+  static void cb_curvatureAnisotropicDiffusionTimeStepValueInput(Fl_Value_Input*, void*);
+public:
+  Fl_Value_Input *curvatureAnisotropicDiffusionIterationsValueInput;
+private:
+  void cb_curvatureAnisotropicDiffusionIterationsValueInput_i(Fl_Value_Input*, void*);
+  static void cb_curvatureAnisotropicDiffusionIterationsValueInput(Fl_Value_Input*, void*);
+public:
+  Fl_Value_Input *curvatureAnisotropicDiffusionConductanceValueInput;
+private:
+  void cb_curvatureAnisotropicDiffusionConductanceValueInput_i(Fl_Value_Input*, void*);
+  static void cb_curvatureAnisotropicDiffusionConductanceValueInput(Fl_Value_Input*, void*);
+public:
+  fltk::LightButton *curvatureAnisotropicDiffusionImageButton;
+private:
+  void cb_curvatureAnisotropicDiffusionImageButton_i(fltk::LightButton*, void*);
+  static void cb_curvatureAnisotropicDiffusionImageButton(fltk::LightButton*, void*);
+public:
+  Fl_Value_Input *gradientAnisotropicDiffusionTimeStepValueInput;
+private:
+  void cb_gradientAnisotropicDiffusionTimeStepValueInput_i(Fl_Value_Input*, void*);
+  static void cb_gradientAnisotropicDiffusionTimeStepValueInput(Fl_Value_Input*, void*);
+public:
+  Fl_Value_Input *gradientAnisotropicDiffusionIterationsValueInput;
+private:
+  void cb_gradientAnisotropicDiffusionIterationsValueInput_i(Fl_Value_Input*, void*);
+  static void cb_gradientAnisotropicDiffusionIterationsValueInput(Fl_Value_Input*, void*);
+public:
+  Fl_Value_Input *gradientAnisotropicDiffusionConductanceValueInput;
+private:
+  void cb_gradientAnisotropicDiffusionConductanceValueInput_i(Fl_Value_Input*, void*);
+  static void cb_gradientAnisotropicDiffusionConductanceValueInput(Fl_Value_Input*, void*);
+public:
+  fltk::LightButton *gradientAnisotropicDiffusionImageButton;
+private:
+  void cb_gradientAnisotropicDiffusionImageButton_i(fltk::LightButton*, void*);
+  static void cb_gradientAnisotropicDiffusionImageButton(fltk::LightButton*, void*);
+  static Fl_Menu_Item menu_Choose[];
+  void cb_None_i(Fl_Menu_*, void*);
+  static void cb_None(Fl_Menu_*, void*);
+  void cb_Curvature_i(Fl_Menu_*, void*);
+  static void cb_Curvature(Fl_Menu_*, void*);
+  void cb_Gradient_i(Fl_Menu_*, void*);
+  static void cb_Gradient(Fl_Menu_*, void*);
+  void cb_Run1_i(Fl_Button*, void*);
+  static void cb_Run1(Fl_Button*, void*);
+public:
+  fltk::LightButton *customRegionGrowingImageButton;
+private:
+  void cb_customRegionGrowingImageButton_i(fltk::LightButton*, void*);
+  static void cb_customRegionGrowingImageButton(fltk::LightButton*, void*);
+public:
+  fltk::LightButton *confidenceConnectedImageButton;
+private:
+  void cb_confidenceConnectedImageButton_i(fltk::LightButton*, void*);
+  static void cb_confidenceConnectedImageButton(fltk::LightButton*, void*);
+public:
+  Fl_Value_Input *iterationsConfidenceValueInput;
+private:
+  void cb_iterationsConfidenceValueInput_i(Fl_Value_Input*, void*);
+  static void cb_iterationsConfidenceValueInput(Fl_Value_Input*, void*);
+public:
+  Fl_Value_Input *multiplierValueInput;
+private:
+  void cb_multiplierValueInput_i(Fl_Value_Input*, void*);
+  static void cb_multiplierValueInput(Fl_Value_Input*, void*);
+  void cb_Run2_i(Fl_Button*, void*);
+  static void cb_Run2(Fl_Button*, void*);
+  void cb_Run3_i(Fl_Button*, void*);
+  static void cb_Run3(Fl_Button*, void*);
 public:
   Fl_Counter *lowerThresholdCounter;
 private:
@@ -39,51 +129,6 @@ public:
 private:
   void cb_thresholdConnectedImageButton_i(fltk::LightButton*, void*);
   static void cb_thresholdConnectedImageButton(fltk::LightButton*, void*);
-  void cb_confidence_i(Fl_Button*, void*);
-  static void cb_confidence(Fl_Button*, void*);
-public:
-  Fl_Value_Input *multiplierValueInput;
-private:
-  void cb_multiplierValueInput_i(Fl_Value_Input*, void*);
-  static void cb_multiplierValueInput(Fl_Value_Input*, void*);
-public:
-  Fl_Value_Input *iterationsConfidenceValueInput;
-private:
-  void cb_iterationsConfidenceValueInput_i(Fl_Value_Input*, void*);
-  static void cb_iterationsConfidenceValueInput(Fl_Value_Input*, void*);
-public:
-  fltk::LightButton *confidenceConnectedImageButton;
-private:
-  void cb_confidenceConnectedImageButton_i(fltk::LightButton*, void*);
-  static void cb_confidenceConnectedImageButton(fltk::LightButton*, void*);
-public:
-  fltk::LightButton *inputImageButton;
-private:
-  void cb_inputImageButton_i(fltk::LightButton*, void*);
-  static void cb_inputImageButton(fltk::LightButton*, void*);
-public:
-  fltk::LightButton *homogeneousImageButton;
-private:
-  void cb_homogeneousImageButton_i(fltk::LightButton*, void*);
-  static void cb_homogeneousImageButton(fltk::LightButton*, void*);
-public:
-  fltk::LightButton *homogeneousImageVTKButton;
-private:
-  void cb_homogeneousImageVTKButton_i(fltk::LightButton*, void*);
-  static void cb_homogeneousImageVTKButton(fltk::LightButton*, void*);
-public:
-  fltk::LightButton *customRegionGrowingImageButton;
-private:
-  void cb_customRegionGrowingImageButton_i(fltk::LightButton*, void*);
-  static void cb_customRegionGrowingImageButton(fltk::LightButton*, void*);
-  void cb_Custom_i(Fl_Button*, void*);
-  static void cb_Custom(Fl_Button*, void*);
-  void cb_quit_i(Fl_Button*, void*);
-  static void cb_quit(Fl_Button*, void*);
-  void cb_load_i(Fl_Button*, void*);
-  static void cb_load(Fl_Button*, void*);
-  void cb_load1_i(Fl_Button*, void*);
-  static void cb_load1(Fl_Button*, void*);
 public:
   ~RegionGrowingGUI();
   virtual void Quit( void );
@@ -97,5 +142,7 @@ public:
   virtual void LoadDicom( void );
   virtual void ShowHomogeneousImageWithVTK( void );
   virtual void ShowCustomRegionGrowingImage( void );
+  virtual void ShowCurvatureAnisotropicDiffusionImage( void );
+  virtual void ShowGradientAnisotropicDiffusionImage( void );
 };
 #endif
