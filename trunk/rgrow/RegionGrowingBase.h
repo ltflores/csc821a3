@@ -82,21 +82,28 @@
 		
 		/** cast filter to convert from input to internal image */
 		typedef	itk::CastImageFilter<InputImageType,InternalImageType>		CastImageFilterType;
+		typedef	itk::CastImageFilter<InputImageType,OutputImageType>		CastImageFilterType2;
 		
 		/** extract filter used for actual region growing results */
 		typedef itk::ExtractImageFilter<InternalImageType,InternalImageType> ExtractImageFilterType;
 		
 		/** null filter, commented code would allow filtered images as input */
-		//typedef itk::CastImageFilter<InternalImageType,InternalImageType> NullImageFilterType;
-		typedef itk::CastImageFilter<InputImageType,InternalImageType> NullImageFilterType;
+		typedef itk::CastImageFilter<InternalImageType,InternalImageType> NullImageFilterType;
+		//typedef itk::CastImageFilter<InputImageType,InternalImageType> NullImageFilterType;
 		
-		//INSERT OTHER FILTERS HERE
+		/** Gradient Anisotropic Image Filter */
+		typedef itk::GradientAnisotropicDiffusionImageFilter<InternalImageType,InternalImageType>
+			GradientAnisotropicDiffusionImageFilterType;
+		
+		/** Curvature Anisotropic Image Filter */
+		typedef   itk::CurvatureAnisotropicDiffusionImageFilter<InternalImageType,InternalImageType> 
+			CurvatureAnisotropicDiffusionImageFilterType;
 		
 		/** threshold image filter */
 		typedef itk::ConnectedThresholdImageFilter<InternalImageType,OutputImageType> ConnectedThresholdImageFilterType;
 		
 		/** confidence connected image filter */
-		typedef itk::ConfidenceConnectedImageFilter<InternalImageType,OutputImageType> ConfidenceConnectedImageFilterType;
+		typedef itk::ConfidenceConnectedImageFilter<InternalImageType,OutputImageType> 				ConfidenceConnectedImageFilterType;
 		
 		/** custom region growing fillter*/
 		typedef itk::CustomRegionGrowingImageFilter<InternalImageType,OutputImageType> CustomRegionGrowingImageFilterType;
@@ -133,12 +140,16 @@
 		bool                                        m_InputImageIsLoaded;
 
 		CastImageFilterType::Pointer                m_CastImageFilter;
+		
+		CastImageFilterType2::Pointer               m_CastImageFilter2;
 
 		ExtractImageFilterType::Pointer             m_ExtractImageFilter;
 
 		NullImageFilterType::Pointer                m_NullImageFilter;
 		
-		//INSERT OTHER FILTER VARIABLE DEFINITIONS
+		CurvatureAnisotropicDiffusionImageFilterType::Pointer  m_CurvatureAnisotropicDiffusionImageFilter;
+
+		GradientAnisotropicDiffusionImageFilterType::Pointer   m_GradientAnisotropicDiffusionImageFilter;
 
 		ConnectedThresholdImageFilterType::Pointer  m_ConnectedThresholdImageFilter;
 

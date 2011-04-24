@@ -18,6 +18,10 @@
 #include "fltkImageViewer.h"
 #include "fltkVTKImageViewer.h"
 
+//includes for vtk rendering
+#include "vtkRenderer.h"
+#include "vtkRenderWindow.h" 
+
 class  RegionGrowing : public RegionGrowingGUI {
 	
 	public:
@@ -84,6 +88,10 @@ class  RegionGrowing : public RegionGrowingGUI {
 		virtual void ShowConsole();
 		virtual void ShowStatus( const char * text);
 		
+		/** preprocessing show functions */
+		virtual void ShowGradientAnisotropicDiffusionImage();
+		virtual void ShowCurvatureAnisotropicDiffusionImage();
+		
 		/** filter / image show functions */
 		virtual void ShowInputImage();
 		virtual void ShowConnectedThresholdImage();
@@ -112,6 +120,10 @@ class  RegionGrowing : public RegionGrowingGUI {
 		/** input image viewer */
 		InputImageViewerType 		m_InputImageViewer;
 		DicomImageViewerType 		m_DicomImageViewer;
+		
+		/** prerprocessing image viewers */
+		InternalImageViewerType		m_GradientAnisotropicDiffusionImageViewer;
+		InternalImageViewerType		m_CurvatureAnisotropicDiffusionImageViewer;
 		
 		/** region growing filters */
 		InternalImageViewerType       m_ConnectedThresholdImageViewer;
