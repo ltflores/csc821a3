@@ -42,9 +42,13 @@ int main( int argc, char * argv[] )
 	//Series Writer
 	typedef itk::GDCMImageIO
 		ImageIOType;
+	
+	/** output file name sgeneration */
+	//typedef itk::GDCMSeriesFileNames
+	//	OutputNamesGeneratorType;
 		
-	typedef itk::GDCMSeriesFileNames
-		OutputNamesGeneratorType;
+	typedef itk::NumericSeriesFileNames
+		OutputNamesType;
 	
 	typedef itk::ImageSeriesWriter< ImageType, Image2DType >
 		SeriesWriterType;
@@ -64,7 +68,7 @@ int main( int argc, char * argv[] )
 	DICOMFileReader::Pointer					m_DicomReader;
 	
 	//File Writer
-	OutputNamesGeneratorType::Pointer 			m_OutputNamesGenerator;
+	OutputNamesType::Pointer 			m_OutputNames;
 	ImageIOType::Pointer 						m_ImageIO;
 	SeriesWriterType::Pointer						m_SeriesWriter;
 	
@@ -83,7 +87,7 @@ int main( int argc, char * argv[] )
 	//Writer
 	m_SeriesWriter = SeriesWriterType::New();
 	m_ImageIO = ImageIOType::New();
-	m_OutputNamesGenerator = OutputNamesGeneratorType::New();
+	m_OutputNames = OutputNamesType::New();
 	
 	//Filter
 	m_CustomRegionGrowingImageFilter = CustomRegionGrowingImageFilterType::New();
@@ -92,9 +96,13 @@ int main( int argc, char * argv[] )
 	/***************************************************************
 	 *	Define Seed Coordinates
 	 **************************************************************/
-	seed[0] = static_cast<IndexType::IndexValueType>( 149.50 ); //x
-	seed[1] = static_cast<IndexType::IndexValueType>( 245.76 ); //y
-	seed[2] = static_cast<IndexType::IndexValueType>( 38.00 );		//z
+	float x = 149.50;
+	float y = 245.76;
+	float z = 38.00;
+	
+	seed[0] = static_cast<IndexType::IndexValueType>( x ); //x
+	seed[1] = static_cast<IndexType::IndexValueType>( y ); //y
+	seed[2] = static_cast<IndexType::IndexValueType>( z );		//z
 	
 	
 	/***************************************************************
@@ -130,17 +138,29 @@ int main( int argc, char * argv[] )
 	 *	Write Series
 	 **************************************************************/
 	const char * outputDirectory = argv[2];
-	std::string outDir = argv[2];
-	itksys::SystemTools::MakeDirectory( outputDirectory );
+	
 	std::cout << "Writing series...\n";
 	m_SeriesWriter->SetInput( m_CustomRegionGrowingImageFilter->GetOutput() );
 	m_SeriesWriter->SetImageIO( m_ImageIO );
 	
 	//Set up OutputNames Writer
-	m_OutputNamesGenerator->SetInputDirectory( argv[1] );
-	m_OutputNamesGenerator->SetOutputDirectory( outDir );
-	m_SeriesWriter->SetFileNames( m_OutputNamesGenerator->GetOutputFileNames() );
+	itksys::SystemTools::MakeDirectory( outputDirectory );
+	std::string seriesFormat(argv[2]);
+	seriesFormat = seriesFormat + "/" + "IM%d.dcm";
+	m_OutputNames->SetSeriesFormat (seriesFormat.c_str());
+	m_OutputNames->SetStartIndex (1);
+	//Find and set end index
+	const ImageType::RegionType& inputRegion = m_DicomReader->GetOutput()->GetLargestPossibleRegion();
+	const ImageType::SizeType& inputSize = inputRegion.GetSize();
+	m_OutputNames->SetEndIndex (inputSize[2]);
+	
+	//set writer file names
+	m_SeriesWriter->SetFileNames( m_OutputNames->GetFileNames() );
+	
+	//copy metadata
 	m_SeriesWriter->SetMetaDataDictionaryArray( m_DicomReader->GetMetaDataDictionaryArray() );
+	
+	//try to write series
 	try
     {
 		m_SeriesWriter->Update();
