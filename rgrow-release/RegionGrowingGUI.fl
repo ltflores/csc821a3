@@ -187,8 +187,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
             }
             Fl_Button {} {
               label Run
-              callback {m_ConfidenceConnectedImageFilter->Update();
-this->ShowVolume();}
+              callback {m_ConfidenceConnectedImageFilter->Update();} selected
               xywh {128 481 45 22} box ROUNDED_BOX
             }
             Fl_Value_Output volumeOutput {
@@ -250,7 +249,7 @@ this->ShowVolume();}
   } {}
   Function {ShowHomogeneousImageWithVTK( void )} {open return_type {virtual void}
   } {}
-  Function {ShowCustomRegionGrowingImage( void )} {open selected return_type {virtual void}
+  Function {ShowCustomRegionGrowingImage( void )} {open return_type {virtual void}
   } {}
   Function {ShowCurvatureAnisotropicDiffusionImage( void )} {open return_type {virtual void}
   } {}
