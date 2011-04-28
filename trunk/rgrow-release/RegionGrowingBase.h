@@ -22,6 +22,7 @@
 #include "itkCastImageFilter.h"
 #include "itkExtractImageFilter.h"
 #include "itkImageIterator.h"
+#include <itkImageRegionIterator.h>
 
 #include "itkConnectedThresholdImageFilter.h"
 #include "itkConfidenceConnectedImageFilter.h"
@@ -107,7 +108,7 @@
 		typedef itk::CustomRegionGrowingImageFilter<InternalImageType,OutputImageType> CustomRegionGrowingImageFilterType;
 		
 		/** volume iterator */
-		typedef itk::ImageIterator< OutputImageType > ImageIterator;
+		typedef itk::ImageRegionIterator< OutputImageType > ImageIterator;
 		
 	public:
 	
