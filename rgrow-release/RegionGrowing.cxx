@@ -56,11 +56,11 @@ RegionGrowing::RegionGrowing() {
                                    gradientAnisotropicDiffusionConductanceValueInput->value() );
 	
 	// init itk filter
-	m_ConnectedThresholdImageFilter->SetLower( 
-      static_cast<unsigned long>( lowerThresholdCounter->value() ) );
+	//m_ConnectedThresholdImageFilter->SetLower( 
+    //  static_cast<unsigned long>( lowerThresholdCounter->value() ) );
 
-	m_ConnectedThresholdImageFilter->SetUpper( 
-      static_cast<unsigned long>( upperThresholdCounter->value() ) );
+	//m_ConnectedThresholdImageFilter->SetUpper( 
+    //  static_cast<unsigned long>( upperThresholdCounter->value() ) );
 	  
 	m_ConfidenceConnectedImageFilter->SetMultiplier( multiplierValueInput->value() );
 
@@ -79,7 +79,7 @@ RegionGrowing::RegionGrowing() {
 	// GUI Observers
 	//inputImageButton->Observe( m_ImageReader.GetPointer() );
 	inputImageButton->Observe( m_DicomReader.GetPointer() );
-	thresholdConnectedImageButton->Observe( m_ConnectedThresholdImageFilter.GetPointer() );
+	//thresholdConnectedImageButton->Observe( m_ConnectedThresholdImageFilter.GetPointer() );
 	confidenceConnectedImageButton->Observe( m_ConfidenceConnectedImageFilter.GetPointer() );
 	customRegionGrowingImageButton->Observe( m_CustomRegionGrowingImageFilter.GetPointer() );
 	gradientAnisotropicDiffusionImageButton->Observe( m_GradientAnisotropicDiffusionImageFilter.GetPointer() );
@@ -319,6 +319,7 @@ void RegionGrowing::ShowVolume( void )
 {
 	std::cout << "ShowVolume: Calculating volume...";
 	unsigned int volume = 0;
+	unsigned int tot_volume = 0;
 	std::cout << "done!\n";
 	std::cout << "ShowVolume: getting output...";
 	OutputImageType::Pointer img = m_ConfidenceConnectedImageFilter->GetOutput();
@@ -332,12 +333,18 @@ void RegionGrowing::ShowVolume( void )
 	std::cout << "ShowVolume: begin iterating...";
 	while( !it.IsAtEnd() )
 	{
+		//std::cout << "ShowVolume: While: 1\n";
 		OutputPixelType val = it.Get();
+		//std::cout << "ShowVolume: While: 2\n";
 		if (val>0)
 		{
+			//std::cout << "ShowVolume: While: 3\n";
 			volume++;
-			++it;
+			//std::cout << "ShowVolume: While: 4\n";
 		}
+		//std::cout << "ShowVolume: While: 5\n";
+		++tot_volume;
+		++it;
     }
 	std::cout << "done!\n";
 	
@@ -345,6 +352,7 @@ void RegionGrowing::ShowVolume( void )
 	
 	std::cout << "ShowVolume: setting volume output in GUI...";
 	volumeOutput->value( volume );
+	totalVolumeOutput->value( tot_volume );
 	std::cout << "done!\n";
 
 }
