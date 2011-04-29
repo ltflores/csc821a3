@@ -12,7 +12,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
       code0 {\#include <RegionGrowingBase.h>}
       code1 {\#include <fltkLightButton.h>} visible
     } {
-      Fl_Group controlsGroup {open
+      Fl_Group controlsGroup {open selected
         xywh {5 21 1031 624}
       } {
         Fl_Group {} {
@@ -104,7 +104,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
             }
             Fl_Value_Input gradientAnisotropicDiffusionTimeStepValueInput {
               label {Time Step}
-              callback {m_GradientAnisotropicDiffusionImageFilter->SetTimeStep( o->value() );} selected
+              callback {m_GradientAnisotropicDiffusionImageFilter->SetTimeStep( o->value() );}
               xywh {369 176 48 24} maximum 10 value 0.05
             }
             Fl_Value_Input gradientAnisotropicDiffusionIterationsValueInput {
@@ -192,7 +192,7 @@ this->ShowVolume();}
               xywh {265 533 45 22} box ROUNDED_BOX
             }
             Fl_Value_Output volumeOutput {
-              label {Region Volume}
+              label {Region Voxels}
               xywh {335 459 98 24}
             }
           }

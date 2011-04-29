@@ -363,7 +363,7 @@ RegionGrowingGUI::RegionGrowingGUI() {
             o->box(FL_ROUNDED_BOX);
             o->callback((Fl_Callback*)cb_Run2);
           } // Fl_Button* o
-          { volumeOutput = new Fl_Value_Output(335, 459, 98, 24, "Region Volume");
+          { volumeOutput = new Fl_Value_Output(335, 459, 98, 24, "Region Voxels");
           } // Fl_Value_Output* volumeOutput
           o->end();
         } // Fl_Group* o
