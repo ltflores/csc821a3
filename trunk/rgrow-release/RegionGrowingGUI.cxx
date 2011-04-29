@@ -129,7 +129,7 @@ void RegionGrowingGUI::cb_Run1(Fl_Button* o, void* v) {
 }
 
 void RegionGrowingGUI::cb_customRegionGrowingImageButton_i(fltk::LightButton*, void*) {
-  //this->ShowCustomRegionGrowingImage();
+  this->ShowCustomRegionGrowingImage();
 }
 void RegionGrowingGUI::cb_customRegionGrowingImageButton(fltk::LightButton* o, void* v) {
   ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_customRegionGrowingImageButton_i(o,v);
@@ -158,51 +158,24 @@ void RegionGrowingGUI::cb_multiplierValueInput(Fl_Value_Input* o, void* v) {
 
 void RegionGrowingGUI::cb_Run2_i(Fl_Button*, void*) {
   m_ConfidenceConnectedImageFilter->Update();
+this->ShowVolume();
 }
 void RegionGrowingGUI::cb_Run2(Fl_Button* o, void* v) {
   ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_Run2_i(o,v);
 }
 
-void RegionGrowingGUI::cb_Run3_i(Fl_Button*, void*) {
-  m_ConnectedThresholdImageFilter->Update();
-}
-void RegionGrowingGUI::cb_Run3(Fl_Button* o, void* v) {
-  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_Run3_i(o,v);
-}
-
-void RegionGrowingGUI::cb_lowerThresholdCounter_i(Fl_Counter* o, void*) {
-  m_ConnectedThresholdImageFilter->SetLower( static_cast<InputPixelType>( o->value() ) );
-}
-void RegionGrowingGUI::cb_lowerThresholdCounter(Fl_Counter* o, void* v) {
-  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_lowerThresholdCounter_i(o,v);
-}
-
-void RegionGrowingGUI::cb_upperThresholdCounter_i(Fl_Counter* o, void*) {
-  m_ConnectedThresholdImageFilter->SetUpper( static_cast<InputPixelType>( o->value() ) );
-}
-void RegionGrowingGUI::cb_upperThresholdCounter(Fl_Counter* o, void* v) {
-  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_upperThresholdCounter_i(o,v);
-}
-
-void RegionGrowingGUI::cb_thresholdConnectedImageButton_i(fltk::LightButton*, void*) {
-  this->ShowConnectedThresholdImage();
-}
-void RegionGrowingGUI::cb_thresholdConnectedImageButton(fltk::LightButton* o, void* v) {
-  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_thresholdConnectedImageButton_i(o,v);
-}
-
 RegionGrowingGUI::RegionGrowingGUI() {
-  { consoleWindow = new Fl_Double_Window(603, 620, "Region Growing");
+  { consoleWindow = new Fl_Double_Window(519, 620, "Region Growing");
     consoleWindow->user_data((void*)(this));
     { controlsGroup = new Fl_Group(5, 21, 1031, 624);
-      { Fl_Group* o = new Fl_Group(10, 25, 580, 86, "Input");
+      { Fl_Group* o = new Fl_Group(10, 25, 495, 86, "Input");
         o->box(FL_THIN_DOWN_BOX);
         o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-        { Fl_Button* o = new Fl_Button(20, 50, 90, 35, "load DICOM");
+        { Fl_Button* o = new Fl_Button(16, 50, 90, 35, "load DICOM");
           o->box(FL_ROUND_UP_BOX);
           o->callback((Fl_Callback*)cb_load);
         } // Fl_Button* o
-        { inputImageButton = new fltk::LightButton(122, 42, 135, 20, "Input Image");
+        { inputImageButton = new fltk::LightButton(115, 42, 95, 20, "Input Image");
           inputImageButton->type(0);
           inputImageButton->box(FL_UP_BOX);
           inputImageButton->value(1);
@@ -216,7 +189,7 @@ RegionGrowingGUI::RegionGrowingGUI() {
           inputImageButton->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
           inputImageButton->when(FL_WHEN_RELEASE);
         } // fltk::LightButton* inputImageButton
-        { homogeneousImageVTKButton = new fltk::LightButton(121, 78, 135, 20, "VTK Render");
+        { homogeneousImageVTKButton = new fltk::LightButton(113, 78, 97, 20, "VTK Render");
           homogeneousImageVTKButton->box(FL_UP_BOX);
           homogeneousImageVTKButton->value(1);
           homogeneousImageVTKButton->color(FL_BACKGROUND_COLOR);
@@ -229,53 +202,53 @@ RegionGrowingGUI::RegionGrowingGUI() {
           homogeneousImageVTKButton->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
           homogeneousImageVTKButton->when(FL_WHEN_RELEASE);
         } // fltk::LightButton* homogeneousImageVTKButton
-        { seedGroup = new Fl_Group(286, 49, 278, 49, "Seed Point");
+        { seedGroup = new Fl_Group(216, 49, 278, 49, "Seed Point");
           seedGroup->box(FL_THIN_UP_BOX);
-          { xSeedPointValueOutput = new Fl_Value_Output(302, 58, 70, 23, "x");
+          { xSeedPointValueOutput = new Fl_Value_Output(232, 58, 70, 23, "x");
             xSeedPointValueOutput->step(0.01);
           } // Fl_Value_Output* xSeedPointValueOutput
-          { ySeedPointValueOutput = new Fl_Value_Output(391, 58, 70, 23, "y");
+          { ySeedPointValueOutput = new Fl_Value_Output(321, 58, 70, 23, "y");
             ySeedPointValueOutput->step(0.01);
           } // Fl_Value_Output* ySeedPointValueOutput
-          { zSeedPointValueOutput = new Fl_Value_Output(482, 58, 68, 23, "z");
+          { zSeedPointValueOutput = new Fl_Value_Output(412, 58, 68, 23, "z");
             zSeedPointValueOutput->step(0.01);
           } // Fl_Value_Output* zSeedPointValueOutput
           seedGroup->end();
         } // Fl_Group* seedGroup
         o->end();
       } // Fl_Group* o
-      { Fl_Button* o = new Fl_Button(243, 580, 90, 30, "quit");
+      { Fl_Button* o = new Fl_Button(210, 580, 90, 30, "quit");
         o->box(FL_ROUNDED_BOX);
         o->callback((Fl_Callback*)cb_quit);
       } // Fl_Button* o
-      { Fl_Group* o = new Fl_Group(8, 135, 582, 235, "Preprocessing Filters");
+      { Fl_Group* o = new Fl_Group(8, 135, 497, 235, "Preprocessing Filters");
         o->box(FL_THIN_DOWN_BOX);
         o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-        { Fl_Group* o = new Fl_Group(85, 163, 203, 152, "Curvature Anisotropic Diffusion");
+        { Fl_Group* o = new Fl_Group(56, 163, 203, 152, "Curvature Anisotropic Diffusion");
           o->box(FL_THIN_UP_BOX);
           o->align(Fl_Align(133));
-          { Fl_Button* o = new Fl_Button(94, 275, 46, 23, "Run");
+          { Fl_Button* o = new Fl_Button(65, 275, 46, 23, "Run");
             o->box(FL_ROUND_UP_BOX);
             o->callback((Fl_Callback*)cb_Run);
             o->align(Fl_Align(FL_ALIGN_WRAP));
           } // Fl_Button* o
-          { curvatureAnisotropicDiffusionTimeStepValueInput = new Fl_Value_Input(178, 177, 55, 23, "Time Step");
+          { curvatureAnisotropicDiffusionTimeStepValueInput = new Fl_Value_Input(149, 177, 55, 23, "Time Step");
             curvatureAnisotropicDiffusionTimeStepValueInput->maximum(10);
-            curvatureAnisotropicDiffusionTimeStepValueInput->value(0.125);
+            curvatureAnisotropicDiffusionTimeStepValueInput->value(0.05);
             curvatureAnisotropicDiffusionTimeStepValueInput->callback((Fl_Callback*)cb_curvatureAnisotropicDiffusionTimeStepValueInput);
           } // Fl_Value_Input* curvatureAnisotropicDiffusionTimeStepValueInput
-          { curvatureAnisotropicDiffusionIterationsValueInput = new Fl_Value_Input(175, 208, 56, 24, "Iterations");
+          { curvatureAnisotropicDiffusionIterationsValueInput = new Fl_Value_Input(146, 208, 56, 24, "Iterations");
             curvatureAnisotropicDiffusionIterationsValueInput->maximum(100);
             curvatureAnisotropicDiffusionIterationsValueInput->value(1);
             curvatureAnisotropicDiffusionIterationsValueInput->callback((Fl_Callback*)cb_curvatureAnisotropicDiffusionIterationsValueInput);
           } // Fl_Value_Input* curvatureAnisotropicDiffusionIterationsValueInput
-          { curvatureAnisotropicDiffusionConductanceValueInput = new Fl_Value_Input(176, 240, 55, 24, "Conductance");
+          { curvatureAnisotropicDiffusionConductanceValueInput = new Fl_Value_Input(147, 240, 55, 24, "Conductance");
             curvatureAnisotropicDiffusionConductanceValueInput->maximum(10);
             curvatureAnisotropicDiffusionConductanceValueInput->step(0.01);
             curvatureAnisotropicDiffusionConductanceValueInput->value(3);
             curvatureAnisotropicDiffusionConductanceValueInput->callback((Fl_Callback*)cb_curvatureAnisotropicDiffusionConductanceValueInput);
           } // Fl_Value_Input* curvatureAnisotropicDiffusionConductanceValueInput
-          { curvatureAnisotropicDiffusionImageButton = new fltk::LightButton(168, 273, 75, 25, "Display");
+          { curvatureAnisotropicDiffusionImageButton = new fltk::LightButton(139, 273, 75, 25, "Display");
             curvatureAnisotropicDiffusionImageButton->box(FL_UP_BOX);
             curvatureAnisotropicDiffusionImageButton->value(1);
             curvatureAnisotropicDiffusionImageButton->color(FL_BACKGROUND_COLOR);
@@ -290,30 +263,30 @@ RegionGrowingGUI::RegionGrowingGUI() {
           } // fltk::LightButton* curvatureAnisotropicDiffusionImageButton
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(302, 163, 191, 152, "Gradient AnisotropicDiffusion");
+        { Fl_Group* o = new Fl_Group(270, 163, 191, 152, "Gradient AnisotropicDiffusion");
           o->box(FL_THIN_UP_BOX);
           o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-          { Fl_Button* o = new Fl_Button(315, 278, 48, 23, "Run");
+          { Fl_Button* o = new Fl_Button(283, 278, 48, 23, "Run");
             o->box(FL_ROUND_UP_BOX);
             o->align(Fl_Align(FL_ALIGN_WRAP));
           } // Fl_Button* o
-          { gradientAnisotropicDiffusionTimeStepValueInput = new Fl_Value_Input(401, 176, 48, 24, "Time Step");
+          { gradientAnisotropicDiffusionTimeStepValueInput = new Fl_Value_Input(369, 176, 48, 24, "Time Step");
             gradientAnisotropicDiffusionTimeStepValueInput->maximum(10);
-            gradientAnisotropicDiffusionTimeStepValueInput->value(0.125);
+            gradientAnisotropicDiffusionTimeStepValueInput->value(0.05);
             gradientAnisotropicDiffusionTimeStepValueInput->callback((Fl_Callback*)cb_gradientAnisotropicDiffusionTimeStepValueInput);
           } // Fl_Value_Input* gradientAnisotropicDiffusionTimeStepValueInput
-          { gradientAnisotropicDiffusionIterationsValueInput = new Fl_Value_Input(400, 207, 50, 24, "Iteration");
+          { gradientAnisotropicDiffusionIterationsValueInput = new Fl_Value_Input(368, 207, 50, 24, "Iteration");
             gradientAnisotropicDiffusionIterationsValueInput->maximum(100);
             gradientAnisotropicDiffusionIterationsValueInput->value(1);
             gradientAnisotropicDiffusionIterationsValueInput->callback((Fl_Callback*)cb_gradientAnisotropicDiffusionIterationsValueInput);
           } // Fl_Value_Input* gradientAnisotropicDiffusionIterationsValueInput
-          { gradientAnisotropicDiffusionConductanceValueInput = new Fl_Value_Input(400, 240, 50, 24, "Conductance");
+          { gradientAnisotropicDiffusionConductanceValueInput = new Fl_Value_Input(368, 240, 50, 24, "Conductance");
             gradientAnisotropicDiffusionConductanceValueInput->maximum(10);
             gradientAnisotropicDiffusionConductanceValueInput->step(0.01);
             gradientAnisotropicDiffusionConductanceValueInput->value(3);
             gradientAnisotropicDiffusionConductanceValueInput->callback((Fl_Callback*)cb_gradientAnisotropicDiffusionConductanceValueInput);
           } // Fl_Value_Input* gradientAnisotropicDiffusionConductanceValueInput
-          { gradientAnisotropicDiffusionImageButton = new fltk::LightButton(384, 278, 68, 20, "Display");
+          { gradientAnisotropicDiffusionImageButton = new fltk::LightButton(352, 278, 68, 20, "Display");
             gradientAnisotropicDiffusionImageButton->box(FL_UP_BOX);
             gradientAnisotropicDiffusionImageButton->value(1);
             gradientAnisotropicDiffusionImageButton->color(FL_BACKGROUND_COLOR);
@@ -334,20 +307,20 @@ RegionGrowingGUI::RegionGrowingGUI() {
         } // Fl_Choice* o
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(9, 394, 581, 179, "Region Growing Filters");
+      { Fl_Group* o = new Fl_Group(9, 394, 496, 179, "Region Growing Filters");
         o->box(FL_THIN_DOWN_BOX);
         o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-        { Fl_Group* o = new Fl_Group(16, 419, 94, 93, "Custom");
+        { Fl_Group* o = new Fl_Group(45, 417, 125, 113, "Custom");
           o->box(FL_THIN_UP_BOX);
-          o->color((Fl_Color)36);
-          { Fl_Button* o = new Fl_Button(40, 428, 50, 22, "Run");
+          o->color(FL_LIGHT1);
+          { Fl_Button* o = new Fl_Button(85, 443, 50, 22, "Run");
             o->box(FL_ROUNDED_BOX);
-            o->color((Fl_Color)36);
+            o->color(FL_LIGHT1);
             o->callback((Fl_Callback*)cb_Run1);
           } // Fl_Button* o
-          { customRegionGrowingImageButton = new fltk::LightButton(25, 462, 75, 23, "Display");
+          { customRegionGrowingImageButton = new fltk::LightButton(70, 482, 75, 23, "Display");
             customRegionGrowingImageButton->box(FL_UP_BOX);
-            customRegionGrowingImageButton->color((Fl_Color)36);
+            customRegionGrowingImageButton->color(FL_LIGHT1);
             customRegionGrowingImageButton->selection_color((Fl_Color)36);
             customRegionGrowingImageButton->labeltype(FL_NORMAL_LABEL);
             customRegionGrowingImageButton->labelfont(0);
@@ -359,9 +332,9 @@ RegionGrowingGUI::RegionGrowingGUI() {
           } // fltk::LightButton* customRegionGrowingImageButton
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(118, 418, 170, 130, "Confidence Connected");
+        { Fl_Group* o = new Fl_Group(185, 416, 300, 152, "Confidence Connected");
           o->box(FL_THIN_UP_BOX);
-          { confidenceConnectedImageButton = new fltk::LightButton(188, 482, 75, 18, "Display");
+          { confidenceConnectedImageButton = new fltk::LightButton(345, 532, 75, 18, "Display");
             confidenceConnectedImageButton->type(0);
             confidenceConnectedImageButton->box(FL_UP_BOX);
             confidenceConnectedImageButton->value(1);
@@ -375,63 +348,27 @@ RegionGrowingGUI::RegionGrowingGUI() {
             confidenceConnectedImageButton->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
             confidenceConnectedImageButton->when(FL_WHEN_RELEASE);
           } // fltk::LightButton* confidenceConnectedImageButton
-          { iterationsConfidenceValueInput = new Fl_Value_Input(198, 426, 52, 24, "iterations");
+          { iterationsConfidenceValueInput = new Fl_Value_Input(268, 424, 52, 24, "iterations");
             iterationsConfidenceValueInput->minimum(1);
             iterationsConfidenceValueInput->maximum(100);
             iterationsConfidenceValueInput->value(2);
             iterationsConfidenceValueInput->callback((Fl_Callback*)cb_iterationsConfidenceValueInput);
           } // Fl_Value_Input* iterationsConfidenceValueInput
-          { multiplierValueInput = new Fl_Value_Input(198, 452, 55, 24, "multiplier");
+          { multiplierValueInput = new Fl_Value_Input(401, 423, 55, 24, "multiplier");
             multiplierValueInput->maximum(100);
             multiplierValueInput->value(2.5);
             multiplierValueInput->callback((Fl_Callback*)cb_multiplierValueInput);
           } // Fl_Value_Input* multiplierValueInput
-          { Fl_Button* o = new Fl_Button(128, 481, 45, 22, "Run");
+          { Fl_Button* o = new Fl_Button(265, 533, 45, 22, "Run");
             o->box(FL_ROUNDED_BOX);
             o->callback((Fl_Callback*)cb_Run2);
           } // Fl_Button* o
-          { volumeOutput = new Fl_Value_Output(200, 511, 45, 24, "Volume");
+          { volumeOutput = new Fl_Value_Output(335, 459, 98, 24, "Region Volume");
           } // Fl_Value_Output* volumeOutput
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(296, 417, 280, 131, "Connected Threshold");
-          o->box(FL_THIN_UP_BOX);
-          { Fl_Button* o = new Fl_Button(304, 513, 50, 25, "Run");
-            o->box(FL_ROUNDED_BOX);
-            o->callback((Fl_Callback*)cb_Run3);
-          } // Fl_Button* o
-          { Fl_Counter* o = lowerThresholdCounter = new Fl_Counter(312, 467, 245, 20, "lower");
-            lowerThresholdCounter->minimum(0);
-            lowerThresholdCounter->maximum(1e+009);
-            lowerThresholdCounter->step(1e+008);
-            lowerThresholdCounter->value(1e+008);
-            lowerThresholdCounter->callback((Fl_Callback*)cb_lowerThresholdCounter);
-            o->lstep(10.0);
-          } // Fl_Counter* lowerThresholdCounter
-          { Fl_Counter* o = upperThresholdCounter = new Fl_Counter(315, 425, 240, 20, "upper");
-            upperThresholdCounter->minimum(0);
-            upperThresholdCounter->maximum(1e+009);
-            upperThresholdCounter->step(1e+008);
-            upperThresholdCounter->value(1e+008);
-            upperThresholdCounter->callback((Fl_Callback*)cb_upperThresholdCounter);
-            o->lstep( 10.0 );
-          } // Fl_Counter* upperThresholdCounter
-          { thresholdConnectedImageButton = new fltk::LightButton(363, 515, 75, 20, "Display");
-            thresholdConnectedImageButton->type(0);
-            thresholdConnectedImageButton->box(FL_UP_BOX);
-            thresholdConnectedImageButton->value(1);
-            thresholdConnectedImageButton->color(FL_BACKGROUND_COLOR);
-            thresholdConnectedImageButton->selection_color((Fl_Color)1);
-            thresholdConnectedImageButton->labeltype(FL_NORMAL_LABEL);
-            thresholdConnectedImageButton->labelfont(0);
-            thresholdConnectedImageButton->labelsize(14);
-            thresholdConnectedImageButton->labelcolor(FL_FOREGROUND_COLOR);
-            thresholdConnectedImageButton->callback((Fl_Callback*)cb_thresholdConnectedImageButton);
-            thresholdConnectedImageButton->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-            thresholdConnectedImageButton->when(FL_WHEN_RELEASE);
-          } // fltk::LightButton* thresholdConnectedImageButton
-          o->end();
-        } // Fl_Group* o
+        { totalVolumeOutput = new Fl_Value_Output(335, 493, 100, 24, "Total Voxels");
+        } // Fl_Value_Output* totalVolumeOutput
         o->end();
       } // Fl_Group* o
       controlsGroup->end();

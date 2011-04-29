@@ -11,7 +11,6 @@
 #include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Value_Input.H>
 #include <FL/Fl_Choice.H>
-#include <FL/Fl_Counter.H>
 
 class RegionGrowingGUI : public RegionGrowingBase {
 public:
@@ -114,25 +113,7 @@ private:
   static void cb_Run2(Fl_Button*, void*);
 public:
   Fl_Value_Output *volumeOutput;
-private:
-  void cb_Run3_i(Fl_Button*, void*);
-  static void cb_Run3(Fl_Button*, void*);
-public:
-  Fl_Counter *lowerThresholdCounter;
-private:
-  void cb_lowerThresholdCounter_i(Fl_Counter*, void*);
-  static void cb_lowerThresholdCounter(Fl_Counter*, void*);
-public:
-  Fl_Counter *upperThresholdCounter;
-private:
-  void cb_upperThresholdCounter_i(Fl_Counter*, void*);
-  static void cb_upperThresholdCounter(Fl_Counter*, void*);
-public:
-  fltk::LightButton *thresholdConnectedImageButton;
-private:
-  void cb_thresholdConnectedImageButton_i(fltk::LightButton*, void*);
-  static void cb_thresholdConnectedImageButton(fltk::LightButton*, void*);
-public:
+  Fl_Value_Output *totalVolumeOutput;
   ~RegionGrowingGUI();
   virtual void Quit( void );
   virtual void Load( void );
