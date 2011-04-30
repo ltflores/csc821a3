@@ -138,6 +138,22 @@ void RegionGrowing::WriteOutputImage( void )
 	this->ShowStatus("Output Image saved");
 }
 
+void RegionGrowing::SaveConfConSeries( void )
+{
+	const  char * dirname = fl_dir_chooser("Choose DICOM image save folder",0,0);
+	
+	try
+	{
+		RegionGrowingBase::SaveConfConSeries( dirname );
+	}
+	catch( ... )
+	{
+		this->ShowStatus("Problems reading file format");
+		controlsGroup->deactivate();
+		return;
+	}
+}
+
 /** write confidence connected image */
 void RegionGrowing::WriteConfidenceConnectedImage( void )
 {

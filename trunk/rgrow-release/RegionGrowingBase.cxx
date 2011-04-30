@@ -19,6 +19,9 @@ RegionGrowingBase::RegionGrowingBase()
 	m_ImageReader                  	= ImageReaderType::New();
 	m_ImageWriter                  	= ImageWriterType::New();
 	m_DicomReader					= DICOMFileReader::New();
+	m_SeriesWriter 					= SeriesWriterType::New();
+	m_ImageIO 						= ImageIOType::New();
+	m_OutputNames 					= OutputNamesType::New();
 	
 	//boolean to indicate DICOM image
 	m_InputImageIsDICOM 			= 1;
@@ -84,6 +87,47 @@ void RegionGrowingBase::LoadInputImage( const char * filename )
 	m_InputImageIsLoaded = 1;
 }
 
+void RegionGrowingBase::SaveConfConSeries( const char * outputDirectory )
+{
+
+	std::cout << "SaveConfConSeries: saving series...";
+	
+	m_SeriesWriter->SetInput( m_ConfidenceConnectedImageFilter->GetOutput() );
+	m_SeriesWriter->SetImageIO( m_ImageIO );
+	
+	//Set up OutputNames Writer
+	itksys::SystemTools::MakeDirectory( outputDirectory );
+	std::string seriesFormat( outputDirectory );
+	seriesFormat = seriesFormat + "/" + "IM%d.dcm";
+	m_OutputNames->SetSeriesFormat (seriesFormat.c_str());
+	m_OutputNames->SetStartIndex (1);
+	
+	//Find and set end index
+	const OutputImageType::RegionType& inputRegion = m_DicomReader->GetOutput()->GetLargestPossibleRegion();
+	const OutputImageType::SizeType& inputSize = inputRegion.GetSize();
+	m_OutputNames->SetEndIndex (inputSize[2]);
+	
+	//set writer file names
+	m_SeriesWriter->SetFileNames( m_OutputNames->GetFileNames() );
+	
+	//copy metadata
+	m_SeriesWriter->SetMetaDataDictionaryArray( m_DicomReader->GetMetaDataDictionaryArray() );
+	
+	//try to write series
+	try
+    {
+		m_SeriesWriter->Update();
+	}
+	catch( itk::ExceptionObject & excp )
+    {
+		std::cerr << "Exception thrown while writing the series " << std::endl;
+		std::cerr << excp << std::endl;
+    }
+	std::cout << "Series written!\n";
+	
+	std::cout << "done!";
+}
+
 /** dicom image loader */
 void RegionGrowingBase::LoadInputImageSeries( const char * dirname )
 {
@@ -116,12 +160,15 @@ void RegionGrowingBase::SelectSmoothingFilter( unsigned int choice )
   switch(choice)
     {
     case 0:
+	  std::cout << "SelectSmoothingFilter: No preprocessing selected\n";
       m_NullImageFilter->SetInput( m_DicomToInternalImageTypeFilter->GetOutput() );
       break;
     case 1:
+	  std::cout << "SelectSmoothingFilter: Gradient Anisotropic diffusion selected\n";
       m_NullImageFilter->SetInput( m_GradientAnisotropicDiffusionImageFilter->GetOutput() );
       break;
     case 2:
+	  std::cout << "SelectSmoothingFilter: Curvature Anisotropic diffusion selected\n";
       m_NullImageFilter->SetInput( m_CurvatureAnisotropicDiffusionImageFilter->GetOutput() );
       break;
     }
