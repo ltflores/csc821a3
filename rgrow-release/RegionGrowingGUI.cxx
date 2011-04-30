@@ -136,6 +136,13 @@ void RegionGrowingGUI::cb_Run2(Fl_Button* o, void* v) {
   ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_Run2_i(o,v);
 }
 
+void RegionGrowingGUI::cb_saveConfConSeriesButton_i(Fl_Button*, void*) {
+  this->SaveConfConSeries();
+}
+void RegionGrowingGUI::cb_saveConfConSeriesButton(Fl_Button* o, void* v) {
+  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_saveConfConSeriesButton_i(o,v);
+}
+
 void RegionGrowingGUI::cb_None_i(Fl_Menu_*, void*) {
   this->SelectSmoothingFilter( 0 );
 }
@@ -151,7 +158,7 @@ void RegionGrowingGUI::cb_Curvature(Fl_Menu_* o, void* v) {
 }
 
 void RegionGrowingGUI::cb_Gradient_i(Fl_Menu_*, void*) {
-  this->SelectSmoothingFilter( 10 );
+  this->SelectSmoothingFilter( 1 );
 }
 void RegionGrowingGUI::cb_Gradient(Fl_Menu_* o, void* v) {
   ((RegionGrowingGUI*)(o->parent()->parent()->parent()->user_data()))->cb_Gradient_i(o,v);
@@ -355,12 +362,16 @@ RegionGrowingGUI::RegionGrowingGUI() {
             multiplierValueInput->value(2.5);
             multiplierValueInput->callback((Fl_Callback*)cb_multiplierValueInput);
           } // Fl_Value_Input* multiplierValueInput
-          { Fl_Button* o = new Fl_Button(218, 533, 45, 22, "Run");
+          { Fl_Button* o = new Fl_Button(210, 531, 45, 22, "Run");
             o->box(FL_ROUNDED_BOX);
             o->callback((Fl_Callback*)cb_Run2);
           } // Fl_Button* o
           { volumeOutput = new Fl_Value_Output(337, 459, 98, 24, "Region Voxels");
           } // Fl_Value_Output* volumeOutput
+          { saveConfConSeriesButton = new Fl_Button(265, 530, 45, 22, "Save");
+            saveConfConSeriesButton->box(FL_ROUNDED_BOX);
+            saveConfConSeriesButton->callback((Fl_Callback*)cb_saveConfConSeriesButton);
+          } // Fl_Button* saveConfConSeriesButton
           o->end();
         } // Fl_Group* o
         { totalVolumeOutput = new Fl_Value_Output(335, 493, 100, 24, "Total Voxels");

@@ -87,6 +87,7 @@ class  RegionGrowing : public RegionGrowingGUI {
 		virtual void WriteOutputImage();
 		virtual void ShowConsole();
 		virtual void ShowStatus( const char * text);
+		virtual void SaveConfConSeries();
 		
 		/** preprocessing show functions */
 		virtual void ShowGradientAnisotropicDiffusionImage();

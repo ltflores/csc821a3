@@ -80,13 +80,6 @@ public:
 private:
   void cb_gradientAnisotropicDiffusionImageButton_i(fltk::LightButton*, void*);
   static void cb_gradientAnisotropicDiffusionImageButton(fltk::LightButton*, void*);
-  static Fl_Menu_Item menu_Choose[];
-  void cb_None_i(Fl_Menu_*, void*);
-  static void cb_None(Fl_Menu_*, void*);
-  void cb_Curvature_i(Fl_Menu_*, void*);
-  static void cb_Curvature(Fl_Menu_*, void*);
-  void cb_Gradient_i(Fl_Menu_*, void*);
-  static void cb_Gradient(Fl_Menu_*, void*);
   void cb_Run1_i(Fl_Button*, void*);
   static void cb_Run1(Fl_Button*, void*);
 public:
@@ -113,7 +106,21 @@ private:
   static void cb_Run2(Fl_Button*, void*);
 public:
   Fl_Value_Output *volumeOutput;
+  Fl_Button *saveConfConSeriesButton;
+private:
+  void cb_saveConfConSeriesButton_i(Fl_Button*, void*);
+  static void cb_saveConfConSeriesButton(Fl_Button*, void*);
+public:
   Fl_Value_Output *totalVolumeOutput;
+  static Fl_Menu_Item menu_Choose[];
+private:
+  void cb_None_i(Fl_Menu_*, void*);
+  static void cb_None(Fl_Menu_*, void*);
+  void cb_Curvature_i(Fl_Menu_*, void*);
+  static void cb_Curvature(Fl_Menu_*, void*);
+  void cb_Gradient_i(Fl_Menu_*, void*);
+  static void cb_Gradient(Fl_Menu_*, void*);
+public:
   ~RegionGrowingGUI();
   virtual void Quit( void );
   virtual void Load( void );
@@ -129,5 +136,6 @@ public:
   virtual void ShowCurvatureAnisotropicDiffusionImage( void );
   virtual void ShowGradientAnisotropicDiffusionImage( void );
   virtual void ShowVolume( void );
+  virtual void SaveConfConSeries( void );
 };
 #endif

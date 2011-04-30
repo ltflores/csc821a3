@@ -17,6 +17,9 @@
 #include "itkImageFileWriter.h"
 
 #include "DICOMFileReader.h"
+#include "itkImageSeriesWriter.h"
+#include "itkNumericSeriesFileNames.h"
+#include "itkGDCMImageIO.h"
 
 #include "itkImage.h"
 #include "itkCastImageFilter.h"
@@ -44,7 +47,7 @@
  {
 	public:
 		/** image dimensions */
-		enum { ImageDimension = 3 };
+		enum { ImageDimension = 3, ImageSeriesWriterDimension = 2 };
 		
 		/** input image pixel type */
 		typedef signed short		InputPixelType;
@@ -54,6 +57,9 @@
 		
 		/** output image pixel type, gives range [0,255] */
 		typedef unsigned char		OutputPixelType;
+		
+		/** 2D pixel type for writing */
+		
 		
 		/** internal pixel type */
 		typedef float				InternalPixelType;
@@ -67,6 +73,9 @@
 		/** internal image type */
 		typedef   itk::Image<InternalPixelType,ImageDimension> InternalImageType;
 		
+		/** 2D image type for series writing */
+		typedef itk::Image< DicomPixelType, ImageSeriesWriterDimension > Image2DType;
+		
 		/** dicom image type */
 		typedef itk::Image< InputPixelType, ImageDimension> 		   DicomImageType;
 		
@@ -77,7 +86,12 @@
 		typedef   itk::ImageFileWriter< OutputImageType >      ImageWriterType;
 		
 		/** DICOM reader */
-		typedef  itk::ImageFileReader< InputImageType   >  DicomReaderType;
+		typedef  itk::ImageFileReader< InputImageType  >  DicomReaderType;
+		
+		/** DICOM series writer */
+		typedef itk::ImageSeriesWriter< OutputImageType, Image2DType > SeriesWriterType;
+		typedef itk::GDCMImageIO							ImageIOType;
+		typedef itk::NumericSeriesFileNames					OutputNamesType;
 		
 		/** DICOM to internal image type filter */
 		typedef itk::RescaleIntensityImageFilter<DicomImageType, InternalImageType> DicomToInternalImageTypeFilterType;
@@ -119,6 +133,7 @@
 		virtual void LoadInputImage(const char * filename);
 		virtual void LoadInputImageSeries(void)=0;
 		virtual void LoadInputImageSeries(const char * dirname);
+		virtual void SaveConfConSeries(const char * outputDirectory);
 		
 		virtual void WriteOutputImage()=0;
 		virtual void WriteOutputImage(const char * filename);
@@ -138,6 +153,11 @@
 		ImageWriterType::Pointer                    m_ImageWriter;
 		
 		DICOMFileReader::Pointer					m_DicomReader;
+		
+		/** dicom series writer */
+		SeriesWriterType::Pointer					m_SeriesWriter;
+		OutputNamesType::Pointer 					m_OutputNames;
+		ImageIOType::Pointer 						m_ImageIO;
 
 		bool                                        m_InputImageIsLoaded;
 
