@@ -8,7 +8,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
   } {
     Fl_Window consoleWindow {
       label {Region Growing} open
-      xywh {979 56 519 620} type Double
+      xywh {644 125 519 620} type Double
       code0 {\#include <RegionGrowingBase.h>}
       code1 {\#include <fltkLightButton.h>} visible
     } {
@@ -61,7 +61,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
         }
         Fl_Group {} {
           label {Preprocessing Filters} open
-          xywh {8 135 497 235} box THIN_DOWN_BOX align 5
+          xywh {8 135 497 200} box THIN_DOWN_BOX align 5
         } {
           Fl_Group {} {
             label {Curvature Anisotropic Diffusion} open
@@ -120,85 +120,85 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
             Fl_Light_Button gradientAnisotropicDiffusionImageButton {
               label Display
               callback {this->ShowGradientAnisotropicDiffusionImage();}
-              xywh {352 278 68 20} value 1 selection_color 1
+              xywh {352 275 73 23} value 1 selection_color 1
               class {fltk::LightButton}
-            }
-          }
-          Fl_Choice {} {
-            label {Choose Filter} open
-            xywh {211 332 225 20} down_box BORDER_BOX
-          } {
-            MenuItem {} {
-              label None
-              callback {this->SelectSmoothingFilter( 0 );}
-              xywh {0 0 30 20}
-            }
-            MenuItem {} {
-              label {Curvature Anisotropic Diffusion }
-              callback {this->SelectSmoothingFilter( 2 );}
-              xywh {5 5 30 20}
-            }
-            MenuItem {} {
-              label {Gradient Anisotropic Diffusion}
-              callback {this->SelectSmoothingFilter( 10 );}
-              xywh {5 5 30 20}
             }
           }
         }
         Fl_Group {} {
           label {Region Growing Filters} open
-          xywh {9 394 496 179} box THIN_DOWN_BOX align 5
+          xywh {9 365 496 208} box THIN_DOWN_BOX align 5
         } {
           Fl_Group {} {
             label Custom open
-            xywh {45 417 125 113} box THIN_UP_BOX color 50
+            xywh {45 418 125 113} box THIN_UP_BOX color 50
           } {
             Fl_Button {} {
               label Run
               callback {m_CustomRegionGrowingImageFilter->Update();}
-              xywh {85 443 50 22} box ROUNDED_BOX color 50
+              xywh {85 444 50 22} box ROUNDED_BOX color 50
             }
             Fl_Light_Button customRegionGrowingImageButton {
               label Display
               callback {this->ShowCustomRegionGrowingImage();}
-              xywh {70 482 75 23} color 50 selection_color 36
+              xywh {70 483 75 23} color 50 selection_color 36
               class {fltk::LightButton}
             }
           }
           Fl_Group {} {
             label {Confidence Connected} open
-            xywh {185 416 300 152} box THIN_UP_BOX
+            xywh {187 416 300 152} box THIN_UP_BOX
           } {
             Fl_Light_Button confidenceConnectedImageButton {
               label Display
               callback {this->ShowConfidenceConnectedImage();}
-              xywh {345 532 75 18} type Normal value 1 selection_color 1
+              xywh {347 532 75 18} type Normal value 1 selection_color 1
               class {fltk::LightButton}
             }
             Fl_Value_Input iterationsConfidenceValueInput {
               label iterations
               callback {m_ConfidenceConnectedImageFilter->SetNumberOfIterations( static_cast<unsigned int>( o->value() ) );}
-              xywh {268 424 52 24} minimum 1 maximum 100 value 2
+              xywh {270 424 52 24} minimum 1 maximum 100 value 2
             }
             Fl_Value_Input multiplierValueInput {
               label multiplier
               callback {m_ConfidenceConnectedImageFilter->SetMultiplier( o->value() );}
-              xywh {401 423 55 24} maximum 100 value 2.5
+              xywh {403 423 55 24} maximum 100 value 2.5
             }
             Fl_Button {} {
               label Run
               callback {m_ConfidenceConnectedImageFilter->Update();
 this->ShowVolume();}
-              xywh {265 533 45 22} box ROUNDED_BOX
+              xywh {218 533 45 22} box ROUNDED_BOX
             }
             Fl_Value_Output volumeOutput {
               label {Region Voxels}
-              xywh {335 459 98 24}
+              xywh {337 459 98 24}
             }
           }
           Fl_Value_Output totalVolumeOutput {
             label {Total Voxels}
             xywh {335 493 100 24}
+          }
+          Fl_Choice {} {
+            label {Choose Filter} open
+            xywh {205 373 225 20} down_box BORDER_BOX
+          } {
+            MenuItem {} {
+              label None
+              callback {this->SelectSmoothingFilter( 0 );}
+              xywh {5 5 30 20}
+            }
+            MenuItem {} {
+              label {Curvature Anisotropic Diffusion }
+              callback {this->SelectSmoothingFilter( 2 );}
+              xywh {10 10 30 20}
+            }
+            MenuItem {} {
+              label {Gradient Anisotropic Diffusion}
+              callback {this->SelectSmoothingFilter( 10 );}
+              xywh {10 10 30 20}
+            }
           }
         }
       }
