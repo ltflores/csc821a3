@@ -8,7 +8,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
   } {
     Fl_Window consoleWindow {
       label {Region Growing} open
-      xywh {1091 254 519 620} type Double
+      xywh {1010 111 519 625} type Double
       code0 {\#include <RegionGrowingBase.h>}
       code1 {\#include <fltkLightButton.h>} visible
     } {
@@ -16,7 +16,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
         xywh {5 21 1031 624}
       } {
         Fl_Group {} {
-          label Input open
+          label Input
           xywh {10 25 495 86} box THIN_DOWN_BOX align 5
         } {
           Fl_Button {} {
@@ -37,7 +37,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
             class {fltk::LightButton}
           }
           Fl_Group seedGroup {
-            label {Seed Point} open
+            label {Seed Point}
             xywh {216 49 278 49} box THIN_UP_BOX
           } {
             Fl_Value_Output xSeedPointValueOutput {
@@ -60,7 +60,7 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
           xywh {210 580 90 30} box ROUNDED_BOX
         }
         Fl_Group {} {
-          label {Preprocessing Filters} open
+          label {Preprocessing Filters}
           xywh {8 135 497 200} box THIN_DOWN_BOX align 5
         } {
           Fl_Group {} {
@@ -127,67 +127,91 @@ class RegionGrowingGUI {open : {public RegionGrowingBase}
         }
         Fl_Group {} {
           label {Region Growing Filters} open
-          xywh {9 365 496 208} box THIN_DOWN_BOX align 5
+          xywh {10 365 496 208} box THIN_DOWN_BOX align 5
         } {
           Fl_Group {} {
             label Custom open
-            xywh {45 418 125 113} box THIN_UP_BOX color 50
+            xywh {19 415 232 145} box THIN_UP_BOX
           } {
             Fl_Button {} {
               label Run
-              callback {m_CustomRegionGrowingImageFilter->Update();}
-              xywh {85 444 50 22} box ROUNDED_BOX color 50
+              callback {m_CustomRegionGrowingImageFilter->Update();
+this->ShowCustomVolume();}
+              xywh {30 529 45 22} box ROUNDED_BOX color 50
             }
             Fl_Light_Button customRegionGrowingImageButton {
               label Display
               callback {this->ShowCustomRegionGrowingImage();}
-              xywh {70 483 75 23} color 50 selection_color 36
+              xywh {163 530 75 20} value 1 color 50 selection_color 1
               class {fltk::LightButton}
+            }
+            Fl_Value_Input multiplierCustomValueInput {
+              label multiplier
+              callback {m_CustomRegionGrowingImageFilter->SetMultiplier( o->value() );}
+              xywh {196 426 32 25} maximum 100 value 2.5
+            }
+            Fl_Value_Input iterationsCustomValueInput {
+              label iterations
+              callback {m_CustomRegionGrowingImageFilter->SetNumberOfIterations( static_cast<unsigned int>( o->value() ) );}
+              xywh {91 427 32 25} maximum 100 value 2
+            }
+            Fl_Value_Output volumeCustomVolumeOutput {
+              label {Region Voxels}
+              xywh {126 463 100 25}
+            }
+            Fl_Value_Output totalCustomVolumeOutput {
+              label {Total Voxels}
+              xywh {126 497 100 25}
+            }
+            Fl_Button saveCustomSeriesButton {
+              label Save
+              callback {this->SaveCustomSeries();}
+              xywh {85 529 45 22} box ROUNDED_BOX
             }
           }
           Fl_Group {} {
             label {Confidence Connected} open
-            xywh {187 416 300 152} box THIN_UP_BOX
+            xywh {265 416 232 145} box THIN_UP_BOX
           } {
             Fl_Light_Button confidenceConnectedImageButton {
               label Display
               callback {this->ShowConfidenceConnectedImage();}
-              xywh {347 532 75 18} type Normal value 1 selection_color 1
+              xywh {405 530 75 20} type Normal value 1 selection_color 1
               class {fltk::LightButton}
             }
             Fl_Value_Input iterationsConfidenceValueInput {
               label iterations
               callback {m_ConfidenceConnectedImageFilter->SetNumberOfIterations( static_cast<unsigned int>( o->value() ) );}
-              xywh {270 424 52 24} minimum 1 maximum 100 value 2
+              xywh {330 424 32 25} minimum 1 maximum 100 value 2
             }
             Fl_Value_Input multiplierValueInput {
               label multiplier
               callback {m_ConfidenceConnectedImageFilter->SetMultiplier( o->value() );}
-              xywh {403 423 55 24} maximum 100 value 2.5
+              xywh {439 423 32 25} maximum 100 value 2.5
             }
             Fl_Button {} {
               label Run
               callback {m_ConfidenceConnectedImageFilter->Update();
 this->ShowVolume();}
-              xywh {210 531 45 22} box ROUNDED_BOX
+              xywh {280 530 45 22} box ROUNDED_BOX
             }
             Fl_Value_Output volumeOutput {
               label {Region Voxels}
-              xywh {337 459 98 24}
+              xywh {366 459 100 25}
             }
             Fl_Button saveConfConSeriesButton {
               label Save
               callback {this->SaveConfConSeries();}
-              xywh {265 530 45 22} box ROUNDED_BOX
+              xywh {335 530 45 22} box ROUNDED_BOX
             }
           }
           Fl_Value_Output totalVolumeOutput {
             label {Total Voxels}
-            xywh {335 493 100 24}
+            xywh {363 493 100 25}
           }
           Fl_Choice {} {
             label {Choose Filter} open
-            xywh {205 373 225 20} down_box BORDER_BOX
+            xywh {200 373 225 20} down_box BORDER_BOX
           } {
             MenuItem {} {
               label None
@@ -201,7 +225,7 @@ this->ShowVolume();}
             }
             MenuItem {} {
               label {Gradient Anisotropic Diffusion}
-              callback {this->SelectSmoothingFilter( 1 );} selected
+              callback {this->SelectSmoothingFilter( 1 );}
               xywh {10 10 30 20}
             }
           }
@@ -240,5 +264,9 @@ this->ShowVolume();}
   Function {ShowVolume( void )} {open return_type {virtual void}
   } {}
   Function {SaveConfConSeries( void )} {open return_type {virtual void}
+  } {}
+  Function {ShowCustomVolume( void )} {open return_type {virtual void}
+  } {}
+  Function {SaveCustomSeries( void )} {open selected return_type {virtual void}
   } {}
 } 

@@ -95,6 +95,7 @@ void RegionGrowingGUI::cb_gradientAnisotropicDiffusionImageButton(fltk::LightBut
 
 void RegionGrowingGUI::cb_Run1_i(Fl_Button*, void*) {
   m_CustomRegionGrowingImageFilter->Update();
+this->ShowCustomVolume();
 }
 void RegionGrowingGUI::cb_Run1(Fl_Button* o, void* v) {
   ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_Run1_i(o,v);
@@ -105,6 +106,27 @@ void RegionGrowingGUI::cb_customRegionGrowingImageButton_i(fltk::LightButton*, v
 }
 void RegionGrowingGUI::cb_customRegionGrowingImageButton(fltk::LightButton* o, void* v) {
   ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_customRegionGrowingImageButton_i(o,v);
+}
+
+void RegionGrowingGUI::cb_multiplierCustomValueInput_i(Fl_Value_Input* o, void*) {
+  m_CustomRegionGrowingImageFilter->SetMultiplier( o->value() );
+}
+void RegionGrowingGUI::cb_multiplierCustomValueInput(Fl_Value_Input* o, void* v) {
+  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_multiplierCustomValueInput_i(o,v);
+}
+
+void RegionGrowingGUI::cb_iterationsCustomValueInput_i(Fl_Value_Input* o, void*) {
+  m_CustomRegionGrowingImageFilter->SetNumberOfIterations( static_cast<unsigned int>( o->value() ) );
+}
+void RegionGrowingGUI::cb_iterationsCustomValueInput(Fl_Value_Input* o, void* v) {
+  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_iterationsCustomValueInput_i(o,v);
+}
+
+void RegionGrowingGUI::cb_saveCustomSeriesButton_i(Fl_Button*, void*) {
+  this->SaveCustomSeries();
+}
+void RegionGrowingGUI::cb_saveCustomSeriesButton(Fl_Button* o, void* v) {
+  ((RegionGrowingGUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_saveCustomSeriesButton_i(o,v);
 }
 
 void RegionGrowingGUI::cb_confidenceConnectedImageButton_i(fltk::LightButton*, void*) {
@@ -172,7 +194,7 @@ Fl_Menu_Item RegionGrowingGUI::menu_Choose[] = {
 };
 
 RegionGrowingGUI::RegionGrowingGUI() {
-  { consoleWindow = new Fl_Double_Window(519, 620, "Region Growing");
+  { consoleWindow = new Fl_Double_Window(519, 625, "Region Growing");
     consoleWindow->user_data((void*)(this));
     { controlsGroup = new Fl_Group(5, 21, 1031, 624);
       { Fl_Group* o = new Fl_Group(10, 25, 495, 86, "Input");
@@ -310,21 +332,21 @@ RegionGrowingGUI::RegionGrowingGUI() {
         } // Fl_Group* o
         o->end();
       } // Fl_Group* o
-      { Fl_Group* o = new Fl_Group(9, 365, 496, 208, "Region Growing Filters");
+      { Fl_Group* o = new Fl_Group(10, 365, 496, 208, "Region Growing Filters");
         o->box(FL_THIN_DOWN_BOX);
         o->align(Fl_Align(FL_ALIGN_TOP_LEFT));
-        { Fl_Group* o = new Fl_Group(45, 418, 125, 113, "Custom");
+        { Fl_Group* o = new Fl_Group(19, 415, 232, 145, "Custom");
           o->box(FL_THIN_UP_BOX);
-          o->color(FL_LIGHT1);
-          { Fl_Button* o = new Fl_Button(85, 444, 50, 22, "Run");
+          { Fl_Button* o = new Fl_Button(30, 529, 45, 22, "Run");
             o->box(FL_ROUNDED_BOX);
             o->color(FL_LIGHT1);
             o->callback((Fl_Callback*)cb_Run1);
           } // Fl_Button* o
-          { customRegionGrowingImageButton = new fltk::LightButton(70, 483, 75, 23, "Display");
+          { customRegionGrowingImageButton = new fltk::LightButton(163, 530, 75, 20, "Display");
             customRegionGrowingImageButton->box(FL_UP_BOX);
+            customRegionGrowingImageButton->value(1);
             customRegionGrowingImageButton->color(FL_LIGHT1);
-            customRegionGrowingImageButton->selection_color((Fl_Color)36);
+            customRegionGrowingImageButton->selection_color((Fl_Color)1);
             customRegionGrowingImageButton->labeltype(FL_NORMAL_LABEL);
             customRegionGrowingImageButton->labelfont(0);
             customRegionGrowingImageButton->labelsize(14);
@@ -333,11 +355,29 @@ RegionGrowingGUI::RegionGrowingGUI() {
             customRegionGrowingImageButton->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
             customRegionGrowingImageButton->when(FL_WHEN_RELEASE);
           } // fltk::LightButton* customRegionGrowingImageButton
+          { multiplierCustomValueInput = new Fl_Value_Input(196, 426, 32, 25, "multiplier");
+            multiplierCustomValueInput->maximum(100);
+            multiplierCustomValueInput->value(2.5);
+            multiplierCustomValueInput->callback((Fl_Callback*)cb_multiplierCustomValueInput);
+          } // Fl_Value_Input* multiplierCustomValueInput
+          { iterationsCustomValueInput = new Fl_Value_Input(91, 427, 32, 25, "iterations");
+            iterationsCustomValueInput->maximum(100);
+            iterationsCustomValueInput->value(2);
+            iterationsCustomValueInput->callback((Fl_Callback*)cb_iterationsCustomValueInput);
+          } // Fl_Value_Input* iterationsCustomValueInput
+          { volumeCustomVolumeOutput = new Fl_Value_Output(126, 463, 100, 25, "Region Voxels");
+          } // Fl_Value_Output* volumeCustomVolumeOutput
+          { totalCustomVolumeOutput = new Fl_Value_Output(126, 497, 100, 25, "Total Voxels");
+          } // Fl_Value_Output* totalCustomVolumeOutput
+          { saveCustomSeriesButton = new Fl_Button(85, 529, 45, 22, "Save");
+            saveCustomSeriesButton->box(FL_ROUNDED_BOX);
+            saveCustomSeriesButton->callback((Fl_Callback*)cb_saveCustomSeriesButton);
+          } // Fl_Button* saveCustomSeriesButton
           o->end();
         } // Fl_Group* o
-        { Fl_Group* o = new Fl_Group(187, 416, 300, 152, "Confidence Connected");
+        { Fl_Group* o = new Fl_Group(265, 416, 232, 145, "Confidence Connected");
           o->box(FL_THIN_UP_BOX);
-          { confidenceConnectedImageButton = new fltk::LightButton(347, 532, 75, 18, "Display");
+          { confidenceConnectedImageButton = new fltk::LightButton(405, 530, 75, 20, "Display");
             confidenceConnectedImageButton->type(0);
             confidenceConnectedImageButton->box(FL_UP_BOX);
             confidenceConnectedImageButton->value(1);
@@ -351,32 +391,32 @@ RegionGrowingGUI::RegionGrowingGUI() {
             confidenceConnectedImageButton->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
             confidenceConnectedImageButton->when(FL_WHEN_RELEASE);
           } // fltk::LightButton* confidenceConnectedImageButton
-          { iterationsConfidenceValueInput = new Fl_Value_Input(270, 424, 52, 24, "iterations");
+          { iterationsConfidenceValueInput = new Fl_Value_Input(330, 424, 32, 25, "iterations");
             iterationsConfidenceValueInput->minimum(1);
             iterationsConfidenceValueInput->maximum(100);
             iterationsConfidenceValueInput->value(2);
             iterationsConfidenceValueInput->callback((Fl_Callback*)cb_iterationsConfidenceValueInput);
           } // Fl_Value_Input* iterationsConfidenceValueInput
-          { multiplierValueInput = new Fl_Value_Input(403, 423, 55, 24, "multiplier");
+          { multiplierValueInput = new Fl_Value_Input(439, 423, 32, 25, "multiplier");
             multiplierValueInput->maximum(100);
             multiplierValueInput->value(2.5);
             multiplierValueInput->callback((Fl_Callback*)cb_multiplierValueInput);
           } // Fl_Value_Input* multiplierValueInput
-          { Fl_Button* o = new Fl_Button(210, 531, 45, 22, "Run");
+          { Fl_Button* o = new Fl_Button(280, 530, 45, 22, "Run");
             o->box(FL_ROUNDED_BOX);
             o->callback((Fl_Callback*)cb_Run2);
           } // Fl_Button* o
-          { volumeOutput = new Fl_Value_Output(337, 459, 98, 24, "Region Voxels");
+          { volumeOutput = new Fl_Value_Output(366, 459, 100, 25, "Region Voxels");
           } // Fl_Value_Output* volumeOutput
-          { saveConfConSeriesButton = new Fl_Button(265, 530, 45, 22, "Save");
+          { saveConfConSeriesButton = new Fl_Button(335, 530, 45, 22, "Save");
             saveConfConSeriesButton->box(FL_ROUNDED_BOX);
             saveConfConSeriesButton->callback((Fl_Callback*)cb_saveConfConSeriesButton);
           } // Fl_Button* saveConfConSeriesButton
           o->end();
         } // Fl_Group* o
-        { totalVolumeOutput = new Fl_Value_Output(335, 493, 100, 24, "Total Voxels");
+        { totalVolumeOutput = new Fl_Value_Output(363, 493, 100, 25, "Total Voxels");
         } // Fl_Value_Output* totalVolumeOutput
-        { Fl_Choice* o = new Fl_Choice(205, 373, 225, 20, "Choose Filter");
+        { Fl_Choice* o = new Fl_Choice(200, 373, 225, 20, "Choose Filter");
           o->down_box(FL_BORDER_BOX);
           o->menu(menu_Choose);
         } // Fl_Choice* o

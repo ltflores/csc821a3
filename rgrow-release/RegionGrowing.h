@@ -88,6 +88,7 @@ class  RegionGrowing : public RegionGrowingGUI {
 		virtual void ShowConsole();
 		virtual void ShowStatus( const char * text);
 		virtual void SaveConfConSeries();
+		virtual void SaveCustomSeries();
 		
 		/** preprocessing show functions */
 		virtual void ShowGradientAnisotropicDiffusionImage();
@@ -103,6 +104,7 @@ class  RegionGrowing : public RegionGrowingGUI {
 		
 		/** volume function */
 		virtual void ShowVolume();
+		virtual void ShowCustomVolume();
 		
 		/** writer definitions */
 		virtual void WriteConnectedThresholdImage();

@@ -27,6 +27,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkFloodFilledImageFunctionConditionalConstIterator.h"
 #include "itkNumericTraits.h"
 #include "itkProgressReporter.h"
+#include <itkVarianceImageFunction.h>
 
 namespace itk
 {
@@ -38,8 +39,8 @@ template <class TInputImage, class TOutputImage>
 CustomRegionGrowingImageFilter<TInputImage, TOutputImage>
 ::CustomRegionGrowingImageFilter()
 {
-  m_Multiplier = 2.5;
-  m_NumberOfIterations = 4;
+  m_Multiplier = 1;
+  m_NumberOfIterations = 1;
   m_Seeds.clear();
   m_InitialNeighborhoodRadius = 1;
   m_ReplaceValue = NumericTraits<OutputImagePixelType>::One;
@@ -150,11 +151,17 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
   typedef MeanImageFunction< InputImageType,
                               double> MeanImageFunctionType;
 
+  typedef VarianceImageFunction< InputImageType,
+                              double> VarianceImageFunctionType;
+
   typedef SumOfSquaresImageFunction< InputImageType,
                                       double > SumOfSquaresImageFunctionType;
+
   
   typename MeanImageFunctionType::Pointer meanFunction = 
                                     MeanImageFunctionType::New();
+ typename VarianceImageFunctionType::Pointer varianceFunction = 
+                                    VarianceImageFunctionType::New();
 
   meanFunction->SetInputImage( inputImage );
   meanFunction->SetNeighborhoodRadius( m_InitialNeighborhoodRadius );
@@ -164,6 +171,9 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
   
   sumOfSquaresFunction->SetInputImage( inputImage );
   sumOfSquaresFunction->SetNeighborhoodRadius( m_InitialNeighborhoodRadius );
+
+  varianceFunction->SetInputImage( inputImage );
+  varianceFunction->SetNeighborhoodRadius( m_InitialNeighborhoodRadius );
   
   // Set up the image function used for connectivity
   typename FunctionType::Pointer function = FunctionType::New();
@@ -177,26 +187,29 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
 
   if( m_InitialNeighborhoodRadius > 0 )
     {
-    InputRealType sumOfSquares = itk::NumericTraits<InputRealType>::Zero;
 
+	InputRealType tempVariance = NumericTraits<InputRealType>::Zero;
     typename SeedsContainerType::const_iterator si = m_Seeds.begin();
     typename SeedsContainerType::const_iterator li = m_Seeds.end();
     while( si != li )
       {
       m_Mean += meanFunction->EvaluateAtIndex( *si );
-      sumOfSquares += sumOfSquaresFunction->EvaluateAtIndex( *si );
+	  //CHANGED TO CALC VARAINCE INSTEAD OF LEAST SQUARES
+	  tempVariance= varianceFunction->EvaluateAtIndex( *si );
       si++;
       }
     const unsigned int num = m_Seeds.size();
     const unsigned int totalNum = num * sumOfSquaresFunction->GetNeighborhoodSize();
     m_Mean /= num;
-    m_Variance = (sumOfSquares - (m_Mean * m_Mean * double(totalNum))) / (double(totalNum) - 1.0);
+	//CHANGED TO CALC VARAINCE INSTEAD OF LEAST SQUARES
+    m_Variance =tempVariance;
     }
   else 
-    {
+    {//Never enters this code.
     InputRealType sum = itk::NumericTraits<InputRealType>::Zero;
     InputRealType sumOfSquares = itk::NumericTraits<InputRealType>::Zero;
-
+	InputRealType meanMinusInstSqrTotal = NumericTraits<InputRealType>::Zero;
+	InputRealType meanInstMinusVal = NumericTraits<InputRealType>::Zero;
     typename SeedsContainerType::const_iterator si = m_Seeds.begin();
     typename SeedsContainerType::const_iterator li = m_Seeds.end();
     while( si != li )
@@ -205,12 +218,13 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
         static_cast< InputRealType >( inputImage->GetPixel( *si ) );
 
       sum += value;
-      sumOfSquares += value * value;
+       meanInstMinusVal= m_Mean-value;
+      meanMinusInstSqrTotal += meanInstMinusVal*meanInstMinusVal;
       si++;
       }
     const unsigned int num = m_Seeds.size();
-    m_Mean      = sum/double(num);
-    m_Variance  = (sumOfSquares - (sum*sum / double(num))) / (double(num) - 1.0);
+     m_Mean      = double(sum) / double(num);
+    m_Variance  = meanMinusInstSqrTotal / (double(num) );
     }
 
 
@@ -297,9 +311,10 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
     secondFunction->SetInputImage ( outputImage );
     secondFunction->ThresholdBetween( m_ReplaceValue, m_ReplaceValue );
 
-    typename NumericTraits<ITK_TYPENAME InputImageType::PixelType>::RealType sum, sumOfSquares;
+    typename NumericTraits<ITK_TYPENAME InputImageType::PixelType>::RealType sum, meanMinusInstSqrTotal, meanInstMinusVal ;
     sum = NumericTraits<InputRealType>::Zero;
-    sumOfSquares = NumericTraits<InputRealType>::Zero;
+    meanMinusInstSqrTotal = NumericTraits<InputRealType>::Zero;
+	 meanInstMinusVal = NumericTraits<InputRealType>::Zero;
     unsigned long numberOfSamples = 0;
     
     SecondIteratorType sit
@@ -309,12 +324,16 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
       {
       const InputRealType value = static_cast<InputRealType>(sit.Get());
       sum += value;
-      sumOfSquares += value * value;
+
+	  //CHANGED TO CALC VARAINCE INSTEAD OF LEAST SQUARES
+	  meanInstMinusVal= m_Mean-value;
+      meanMinusInstSqrTotal += meanInstMinusVal*meanInstMinusVal;
       ++numberOfSamples;
       ++sit;
       }
-    m_Mean      = sum / double(numberOfSamples);
-    m_Variance  = (sumOfSquares - (sum*sum / double(numberOfSamples))) / (double(numberOfSamples) - 1.0);
+    m_Mean      = double(sum) / double(numberOfSamples);
+	//CHANGED TO CALC VARAINCE INSTEAD OF LEAST SQUARES
+    m_Variance  = meanMinusInstSqrTotal / (double(numberOfSamples) );
     // if the variance is zero, there is no point in continuing
     if ( m_Variance == 0 )
       {
@@ -324,8 +343,8 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
                     << ", variance = " << m_Variance 
                     << " , vcl_sqrt(variance) = " << vcl_sqrt(m_Variance));
       itkDebugMacro(<< "\nsum = " << sum 
-                    << ", sumOfSquares = "
-                    << sumOfSquares << "\nnumberOfSamples = "
+
+
                     << numberOfSamples);
       break;
       }
@@ -361,7 +380,7 @@ CustomRegionGrowingImageFilter<TInputImage,TOutputImage>
                   << "\nmean = " << m_Mean
                   << ", variance = " << m_Variance
                   << " , vcl_sqrt(variance) = " << vcl_sqrt(m_Variance ));
-    itkDebugMacro(<< "\nsum = " << sum << ", sumOfSquares = " << sumOfSquares << "\nnum = " << numberOfSamples);
+    
     
 
 

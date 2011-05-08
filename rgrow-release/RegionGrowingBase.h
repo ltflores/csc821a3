@@ -134,6 +134,7 @@
 		virtual void LoadInputImageSeries(void)=0;
 		virtual void LoadInputImageSeries(const char * dirname);
 		virtual void SaveConfConSeries(const char * outputDirectory);
+		virtual void SaveCustomSeries(const char * outputDirectory);
 		
 		virtual void WriteOutputImage()=0;
 		virtual void WriteOutputImage(const char * filename);
