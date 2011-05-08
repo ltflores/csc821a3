@@ -88,6 +88,23 @@ private:
   void cb_customRegionGrowingImageButton_i(fltk::LightButton*, void*);
   static void cb_customRegionGrowingImageButton(fltk::LightButton*, void*);
 public:
+  Fl_Value_Input *multiplierCustomValueInput;
+private:
+  void cb_multiplierCustomValueInput_i(Fl_Value_Input*, void*);
+  static void cb_multiplierCustomValueInput(Fl_Value_Input*, void*);
+public:
+  Fl_Value_Input *iterationsCustomValueInput;
+private:
+  void cb_iterationsCustomValueInput_i(Fl_Value_Input*, void*);
+  static void cb_iterationsCustomValueInput(Fl_Value_Input*, void*);
+public:
+  Fl_Value_Output *volumeCustomVolumeOutput;
+  Fl_Value_Output *totalCustomVolumeOutput;
+  Fl_Button *saveCustomSeriesButton;
+private:
+  void cb_saveCustomSeriesButton_i(Fl_Button*, void*);
+  static void cb_saveCustomSeriesButton(Fl_Button*, void*);
+public:
   fltk::LightButton *confidenceConnectedImageButton;
 private:
   void cb_confidenceConnectedImageButton_i(fltk::LightButton*, void*);
@@ -137,5 +154,7 @@ public:
   virtual void ShowGradientAnisotropicDiffusionImage( void );
   virtual void ShowVolume( void );
   virtual void SaveConfConSeries( void );
+  virtual void ShowCustomVolume( void );
+  virtual void SaveCustomSeries( void );
 };
 #endif

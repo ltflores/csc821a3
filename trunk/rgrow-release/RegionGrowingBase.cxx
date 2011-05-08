@@ -128,6 +128,47 @@ void RegionGrowingBase::SaveConfConSeries( const char * outputDirectory )
 	std::cout << "done!";
 }
 
+void RegionGrowingBase::SaveCustomSeries( const char * outputDirectory )
+{
+
+	std::cout << "SaveCustomSeries: saving series...";
+	
+	m_SeriesWriter->SetInput( m_CustomRegionGrowingImageFilter->GetOutput() );
+	m_SeriesWriter->SetImageIO( m_ImageIO );
+	
+	//Set up OutputNames Writer
+	itksys::SystemTools::MakeDirectory( outputDirectory );
+	std::string seriesFormat( outputDirectory );
+	seriesFormat = seriesFormat + "/" + "IM%d.dcm";
+	m_OutputNames->SetSeriesFormat (seriesFormat.c_str());
+	m_OutputNames->SetStartIndex (1);
+	
+	//Find and set end index
+	const OutputImageType::RegionType& inputRegion = m_DicomReader->GetOutput()->GetLargestPossibleRegion();
+	const OutputImageType::SizeType& inputSize = inputRegion.GetSize();
+	m_OutputNames->SetEndIndex (inputSize[2]);
+	
+	//set writer file names
+	m_SeriesWriter->SetFileNames( m_OutputNames->GetFileNames() );
+	
+	//copy metadata
+	m_SeriesWriter->SetMetaDataDictionaryArray( m_DicomReader->GetMetaDataDictionaryArray() );
+	
+	//try to write series
+	try
+    {
+		m_SeriesWriter->Update();
+	}
+	catch( itk::ExceptionObject & excp )
+    {
+		std::cerr << "Exception thrown while writing the series " << std::endl;
+		std::cerr << excp << std::endl;
+    }
+	std::cout << "Series written!\n";
+	
+	std::cout << "done!";
+}
+
 /** dicom image loader */
 void RegionGrowingBase::LoadInputImageSeries( const char * dirname )
 {

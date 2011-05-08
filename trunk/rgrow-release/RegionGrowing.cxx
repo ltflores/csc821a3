@@ -68,8 +68,8 @@ RegionGrowing::RegionGrowing() {
       static_cast<InputPixelType>( iterationsConfidenceValueInput->value() ) );
 	  
 	/*********** HARD VALUES FOR OUR CUSTOM REGION GROWING FILTER **************/
-	m_CustomRegionGrowingImageFilter->SetMultiplier( static_cast<InputPixelType>( 2.5 ) );
-	m_CustomRegionGrowingImageFilter->SetNumberOfIterations( static_cast<InputPixelType>( 2 ) );
+	//m_CustomRegionGrowingImageFilter->SetMultiplier( static_cast<InputPixelType>( 2.5 ) );
+	//m_CustomRegionGrowingImageFilter->SetNumberOfIterations( static_cast<InputPixelType>( 2 ) );
 	/***************************************************************************/
 	
 	m_VTKSegmentedImageViewer = VTKImageViewerType::New();
@@ -145,6 +145,22 @@ void RegionGrowing::SaveConfConSeries( void )
 	try
 	{
 		RegionGrowingBase::SaveConfConSeries( dirname );
+	}
+	catch( ... )
+	{
+		this->ShowStatus("Problems reading file format");
+		controlsGroup->deactivate();
+		return;
+	}
+}
+
+void RegionGrowing::SaveCustomSeries( void )
+{
+	const  char * dirname = fl_dir_chooser("Choose DICOM image save folder",0,0);
+	
+	try
+	{
+		RegionGrowingBase::SaveCustomSeries( dirname );
 	}
 	catch( ... )
 	{
@@ -369,6 +385,48 @@ void RegionGrowing::ShowVolume( void )
 	std::cout << "ShowVolume: setting volume output in GUI...";
 	volumeOutput->value( volume );
 	totalVolumeOutput->value( tot_volume );
+	std::cout << "done!\n";
+
+}
+
+void RegionGrowing::ShowCustomVolume( void )
+{
+	std::cout << "ShowVolume: Calculating volume...";
+	unsigned int volume = 0;
+	unsigned int tot_volume = 0;
+	std::cout << "done!\n";
+	std::cout << "ShowVolume: getting output...";
+	OutputImageType::Pointer img = m_CustomRegionGrowingImageFilter->GetOutput();
+	std::cout << "done!\n";
+	std::cout << "ShowVolume: instantiating iterator...";
+	ImageIterator  it ( img, img->GetRequestedRegion() );
+	std::cout << "done!\n";
+	std::cout << "ShowVolume: go to iterator beginning...";
+	it.GoToBegin();
+	std::cout << "done!\n";
+	std::cout << "ShowVolume: begin iterating...";
+	while( !it.IsAtEnd() )
+	{
+		//std::cout << "ShowVolume: While: 1\n";
+		OutputPixelType val = it.Get();
+		//std::cout << "ShowVolume: While: 2\n";
+		if (val>0)
+		{
+			//std::cout << "ShowVolume: While: 3\n";
+			volume++;
+			//std::cout << "ShowVolume: While: 4\n";
+		}
+		//std::cout << "ShowVolume: While: 5\n";
+		++tot_volume;
+		++it;
+    }
+	std::cout << "done!\n";
+	
+	std::cout << "ShowVolume: volume = " << volume << "\n";
+	
+	std::cout << "ShowVolume: setting volume output in GUI...";
+	volumeCustomVolumeOutput->value( volume );
+	totalCustomVolumeOutput->value( tot_volume );
 	std::cout << "done!\n";
 
 }
